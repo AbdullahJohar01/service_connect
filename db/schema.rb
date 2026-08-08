@@ -10,9 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_07_123743) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_08_082707) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "customer_profiles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date_of_birth"
+    t.string "preferred_language"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_customer_profiles_on_user_id"
+  end
+
+  create_table "provider_profiles", force: :cascade do |t|
+    t.integer "approval_status", default: 0, null: false
+    t.decimal "average_rating", precision: 3, scale: 2, default: "0.0"
+    t.string "business_name", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "experience_years", default: 0
+    t.decimal "hourly_rate", precision: 10, scale: 2
+    t.integer "total_reviews", default: 0
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_provider_profiles_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -28,4 +51,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_07_123743) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end
+
+  add_foreign_key "customer_profiles", "users"
+  add_foreign_key "provider_profiles", "users"
 end

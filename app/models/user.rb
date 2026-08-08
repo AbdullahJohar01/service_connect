@@ -1,6 +1,9 @@
 class User < ApplicationRecord
   has_secure_password
 
+  has_one :customer_profile, dependent: :destroy
+  has_one :provider_profile, dependent: :destroy
+
   enum :role, {
     customer: 0,
     provider: 1,
