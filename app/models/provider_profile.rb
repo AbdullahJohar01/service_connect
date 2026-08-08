@@ -6,4 +6,8 @@ class ProviderProfile < ApplicationRecord
     approved: 1,
     rejected: 2
   }
+
+  validates :business_name, presence: true
+  validates :experience_years, numericality: { greater_than_or_equal_to: 0 }
+  validates :hourly_rate, numericality: { greater_than: 0 }
 end
