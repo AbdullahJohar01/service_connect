@@ -16,4 +16,7 @@ Rails.application.routes.draw do
   post "/api/v1/auth/login", to: "api/v1/auth#login"
 
   get "/api/v1/users/me", to: "api/v1/users#me"
+
+  get "/api/v1/providers", to: "api/v1/providers#index"
+  get "/api/v1/providers/:id", to: "api/v1/providers#show"
 end

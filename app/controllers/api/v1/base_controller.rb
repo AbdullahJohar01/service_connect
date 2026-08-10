@@ -27,4 +27,16 @@ class Api::V1::BaseController < ActionController::API
       render json: { error: "User not found" }, status: :unauthorized
     end
   end
+
+  def require_provider
+    unless current_user&.provider?
+      render json: { error: "Provider access required" }, status: :forbidden
+    end
+  end
+
+  def require_admin
+    unless current_user&.admin?
+      render json: { error: "Admin access required" }, status: :forbidden
+    end
+  end
 end
