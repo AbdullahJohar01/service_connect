@@ -13,4 +13,7 @@ Rails.application.routes.draw do
   # root "posts#index"
   post "/api/v1/auth/test", to: "api/v1/auth#test"
   post "/api/v1/auth/register", to: "api/v1/auth#register"
+  post "/api/v1/auth/login", to: "api/v1/auth#login"
+
+  get "/api/v1/users/me", to: "api/v1/users#me"
 end
