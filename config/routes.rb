@@ -12,4 +12,5 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   post "/api/v1/auth/test", to: "api/v1/auth#test"
+  post "/api/v1/auth/register", to: "api/v1/auth#register"
 end
