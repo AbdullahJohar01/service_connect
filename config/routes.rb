@@ -19,4 +19,5 @@ Rails.application.routes.draw do
 
   get "/api/v1/providers", to: "api/v1/providers#index"
   get "/api/v1/providers/:id", to: "api/v1/providers#show"
+  get "/api/v1/providers/:id/availability", to: "api/v1/providers#availability"
 end

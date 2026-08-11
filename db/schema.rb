@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_08_082707) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_10_210517) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "availabilities", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.integer "day_of_week", null: false
+    t.time "end_time", null: false
+    t.bigint "provider_profile_id", null: false
+    t.time "start_time", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider_profile_id"], name: "index_availabilities_on_provider_profile_id"
+  end
 
   create_table "customer_profiles", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -52,6 +63,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_082707) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "availabilities", "provider_profiles"
   add_foreign_key "customer_profiles", "users"
   add_foreign_key "provider_profiles", "users"
 end

@@ -1,5 +1,6 @@
 class ProviderProfile < ApplicationRecord
   belongs_to :user
+  has_many :availabilities, dependent: :destroy
 
   enum :approval_status, {
     pending: 0,
