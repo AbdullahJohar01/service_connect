@@ -20,4 +20,22 @@ Rails.application.routes.draw do
   get "/api/v1/providers", to: "api/v1/providers#index"
   get "/api/v1/providers/:id", to: "api/v1/providers#show"
   get "/api/v1/providers/:id/availability", to: "api/v1/providers#availability"
+
+  get "/api/v1/bookings", to: "api/v1/bookings#index"
+  post "/api/v1/bookings", to: "api/v1/bookings#create"
+  get "/api/v1/bookings/:id", to: "api/v1/bookings#show"
+
+  patch "/api/v1/bookings/:id/accept", to: "api/v1/bookings#accept"
+  patch "/api/v1/bookings/:id/reject", to: "api/v1/bookings#reject"
+  patch "/api/v1/bookings/:id/confirm", to: "api/v1/bookings#confirm"
+  patch "/api/v1/bookings/:id/start", to: "api/v1/bookings#start"
+  patch "/api/v1/bookings/:id/complete", to: "api/v1/bookings#complete"
+  patch "/api/v1/bookings/:id/cancel", to: "api/v1/bookings#cancel"
+
+  get "/api/v1/reviews", to: "api/v1/reviews#index"
+  get "/api/v1/reviews/:id", to: "api/v1/reviews#show"
+
+  post "/api/v1/bookings/:booking_id/review", to: "api/v1/reviews#create"
+
+  delete "/api/v1/reviews/:id", to: "api/v1/reviews#destroy"
 end

@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  customer: one
+  provider: one
+  service_category: one
+  address: one
+  scheduled_at: 2026-08-11 13:51:31
+  estimated_duration: 1
+  customer_description: MyText
+  provider_notes: MyText
+  status: 1
+  estimated_price: 9.99
+  final_price: 9.99
+  cancellation_reason: MyText
+  accepted_at: 2026-08-11 13:51:31
+  started_at: 2026-08-11 13:51:31
+  completed_at: 2026-08-11 13:51:31
+  cancelled_at: 2026-08-11 13:51:31
+
+two:
+  customer: two
+  provider: two
+  service_category: two
+  address: two
+  scheduled_at: 2026-08-11 13:51:31
+  estimated_duration: 1
+  customer_description: MyText
+  provider_notes: MyText
+  status: 1
+  estimated_price: 9.99
+  final_price: 9.99
+  cancellation_reason: MyText
+  accepted_at: 2026-08-11 13:51:31
+  started_at: 2026-08-11 13:51:31
+  completed_at: 2026-08-11 13:51:31
+  cancelled_at: 2026-08-11 13:51:31
