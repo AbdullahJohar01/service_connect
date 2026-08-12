@@ -4,6 +4,8 @@ class Booking < ApplicationRecord
   belongs_to :service_category
   belongs_to :address
   has_one :review, dependent: :destroy
+  has_many :messages, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 
   enum :status, {
     pending: 0,

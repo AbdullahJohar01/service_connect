@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_one :provider_profile, dependent: :destroy
   has_many :addresses, dependent: :destroy
   has_many :reviews, foreign_key: :customer_id, dependent: :destroy
+  has_many :messages, foreign_key: :sender_id, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 
   has_many :customer_bookings,
          class_name: "Booking",

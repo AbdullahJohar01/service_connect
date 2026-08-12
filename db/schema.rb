@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_11_143210) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_11_194655) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -71,6 +71,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_11_143210) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_customer_profiles_on_user_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.bigint "booking_id", null: false
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.bigint "sender_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["booking_id"], name: "index_messages_on_booking_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "booking_id", null: false
+    t.datetime "created_at", null: false
+    t.text "message", null: false
+    t.string "notification_type", null: false
+    t.boolean "read", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["booking_id"], name: "index_notifications_on_booking_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "provider_profiles", force: :cascade do |t|
@@ -143,6 +165,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_11_143210) do
   add_foreign_key "bookings", "service_categories"
   add_foreign_key "bookings", "users", column: "customer_id"
   add_foreign_key "customer_profiles", "users"
+  add_foreign_key "messages", "bookings"
+  add_foreign_key "messages", "users", column: "sender_id"
+  add_foreign_key "notifications", "bookings"
+  add_foreign_key "notifications", "users"
   add_foreign_key "provider_profiles", "users"
   add_foreign_key "provider_services", "provider_profiles"
   add_foreign_key "provider_services", "service_categories"

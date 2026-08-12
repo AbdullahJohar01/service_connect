@@ -73,6 +73,13 @@ class Api::V1::BookingsController < Api::V1::BaseController
       status: :accepted,
       accepted_at: Time.current
     )
+      Notification.create!(
+        user: @booking.customer,
+        booking: @booking,
+        notification_type: "booking_accepted",
+        message: "Your booking has been accepted by the provider."
+      )
+
       render json: {
         message: "Booking accepted",
         booking: booking_json(@booking)
@@ -100,6 +107,13 @@ class Api::V1::BookingsController < Api::V1::BaseController
     end
 
     if @booking.update(status: :rejected)
+      Notification.create!(
+        user: @booking.customer,
+        booking: @booking,
+        notification_type: "booking_rejected",
+        message: "Your booking has been rejected by the provider."
+      )
+
       render json: {
         message: "Booking rejected",
         booking: booking_json(@booking)
@@ -127,6 +141,13 @@ class Api::V1::BookingsController < Api::V1::BaseController
     end
 
     if @booking.update(status: :confirmed)
+      Notification.create!(
+        user: @booking.provider.user,
+        booking: @booking,
+        notification_type: "booking_confirmed",
+        message: "A customer has confirmed the booking."
+      )
+
       render json: {
         message: "Booking confirmed",
         booking: booking_json(@booking)
@@ -157,6 +178,13 @@ class Api::V1::BookingsController < Api::V1::BaseController
       status: :in_progress,
       started_at: Time.current
     )
+      Notification.create!(
+        user: @booking.customer,
+        booking: @booking,
+        notification_type: "booking_started",
+        message: "Your booking has been started by the provider."
+      )
+
       render json: {
         message: "Booking started",
         booking: booking_json(@booking)
@@ -187,6 +215,13 @@ class Api::V1::BookingsController < Api::V1::BaseController
       status: :completed,
       completed_at: Time.current
     )
+      Notification.create!(
+        user: @booking.customer,
+        booking: @booking,
+        notification_type: "booking_completed",
+        message: "Your booking has been completed by the provider."
+      )
+
       render json: {
         message: "Booking completed",
         booking: booking_json(@booking)
@@ -223,6 +258,19 @@ class Api::V1::BookingsController < Api::V1::BaseController
       cancellation_reason: params[:cancellation_reason],
       cancelled_at: Time.current
     )
+      notification_user = if @booking.customer == current_user
+                            @booking.provider.user
+      else
+                            @booking.customer
+      end
+
+      Notification.create!(
+        user: notification_user,
+        booking: @booking,
+        notification_type: "booking_cancelled",
+        message: "Your booking has been cancelled."
+      )
+
       render json: {
         message: "Booking cancelled",
         booking: booking_json(@booking)
