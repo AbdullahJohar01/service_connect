@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  booking: one
+  changed_by: one
+  previous_status: 1
+  new_status: 1
+  notes: MyText
+
+two:
+  booking: two
+  changed_by: two
+  previous_status: 1
+  new_status: 1
+  notes: MyText

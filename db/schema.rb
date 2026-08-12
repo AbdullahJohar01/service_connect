@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_11_194655) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_12_085050) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,6 +39,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_11_194655) do
     t.index ["provider_profile_id"], name: "index_availabilities_on_provider_profile_id"
   end
 
+  create_table "booking_status_histories", force: :cascade do |t|
+    t.bigint "booking_id", null: false
+    t.bigint "changed_by_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "new_status", null: false
+    t.text "notes"
+    t.integer "previous_status"
+    t.datetime "updated_at", null: false
+    t.index ["booking_id"], name: "index_booking_status_histories_on_booking_id"
+    t.index ["changed_by_id"], name: "index_booking_status_histories_on_changed_by_id"
+  end
+
   create_table "bookings", force: :cascade do |t|
     t.datetime "accepted_at"
     t.bigint "address_id", null: false
@@ -56,7 +68,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_11_194655) do
     t.datetime "scheduled_at"
     t.bigint "service_category_id", null: false
     t.datetime "started_at"
-    t.integer "status"
+    t.integer "status", default: 0
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_bookings_on_address_id"
     t.index ["customer_id"], name: "index_bookings_on_customer_id"
@@ -160,6 +172,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_11_194655) do
 
   add_foreign_key "addresses", "users"
   add_foreign_key "availabilities", "provider_profiles"
+  add_foreign_key "booking_status_histories", "bookings"
+  add_foreign_key "booking_status_histories", "users", column: "changed_by_id"
   add_foreign_key "bookings", "addresses"
   add_foreign_key "bookings", "provider_profiles", column: "provider_id"
   add_foreign_key "bookings", "service_categories"

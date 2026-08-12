@@ -1,21 +1,19 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
   user: one
-  label: MyString
-  street: MyString
-  city: MyString
-  postal_code: MyString
-  latitude: 9.99
-  longitude: 9.99
-  is_default: false
+  label: Home
+  street: 123 Main Street
+  city: Karachi
+  postal_code: "75000"
+  latitude: 24.8607
+  longitude: 67.0011
+  is_default: true
 
 two:
   user: two
-  label: MyString
-  street: MyString
-  city: MyString
-  postal_code: MyString
-  latitude: 9.99
-  longitude: 9.99
-  is_default: false
+  label: Office
+  street: 456 Business Avenue
+  city: Karachi
+  postal_code: "75500"
+  latitude: 24.9000
+  longitude: 67.1000
+  is_default: true

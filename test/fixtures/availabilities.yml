@@ -1,11 +1,13 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+one:
+  provider_profile: one
+  day_of_week: 1
+  start_time: "09:00"
+  end_time: "17:00"
+  active: true
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+two:
+  provider_profile: two
+  day_of_week: 2
+  start_time: "09:00"
+  end_time: "17:00"
+  active: true

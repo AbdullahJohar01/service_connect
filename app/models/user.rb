@@ -7,11 +7,13 @@ class User < ApplicationRecord
   has_many :reviews, foreign_key: :customer_id, dependent: :destroy
   has_many :messages, foreign_key: :sender_id, dependent: :destroy
   has_many :notifications, dependent: :destroy
-
   has_many :customer_bookings,
-         class_name: "Booking",
-         foreign_key: :customer_id,
-         dependent: :destroy
+            class_name: "Booking",
+            foreign_key: :customer_id,
+            dependent: :destroy
+  has_many :booking_status_histories,
+            foreign_key: :changed_by_id,
+            dependent: :destroy
 
   enum :role, {
     customer: 0,
