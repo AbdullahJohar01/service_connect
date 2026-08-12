@@ -1,4 +1,5 @@
 class Api::V1::CustomerProfilesController < Api::V1::BaseController
+  before_action :require_customer
   before_action :set_customer_profile, only: [ :show, :update ]
 
   def show
@@ -18,7 +19,9 @@ class Api::V1::CustomerProfilesController < Api::V1::BaseController
         customer_profile: profile_json(@customer_profile)
       }, status: :created
     else
-      render json: { errors: @customer_profile.errors.full_messages }, status: :unprocessable_entity
+      render json: {
+        errors: @customer_profile.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
@@ -29,11 +32,19 @@ class Api::V1::CustomerProfilesController < Api::V1::BaseController
         customer_profile: profile_json(@customer_profile)
       }
     else
-      render json: { errors: @customer_profile.errors.full_messages }, status: :unprocessable_entity
+      render json: {
+        errors: @customer_profile.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
   private
+
+  def require_customer
+    unless current_user.customer?
+      render json: { error: "Customer access required" }, status: :forbidden
+    end
+  end
 
   def set_customer_profile
     @customer_profile = current_user.customer_profile
