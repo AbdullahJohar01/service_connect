@@ -15,3 +15,12 @@ two:
   phone_number: "03000000002"
   role: provider
   status: active
+
+three:
+  first_name: Test
+  last_name: Provider Two
+  email: provider_two_test@example.com
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  phone_number: "03000000003"
+  role: provider
+  status: active
