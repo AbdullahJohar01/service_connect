@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get "/api/v1/providers", to: "api/v1/providers#index"
   get "/api/v1/providers/:id", to: "api/v1/providers#show"
   get "/api/v1/providers/:id/availability", to: "api/v1/providers#availability"
+  get "/api/v1/providers/:id/reviews", to: "api/v1/providers#reviews"
 
   get "/api/v1/bookings", to: "api/v1/bookings#index"
   post "/api/v1/bookings", to: "api/v1/bookings#create"
