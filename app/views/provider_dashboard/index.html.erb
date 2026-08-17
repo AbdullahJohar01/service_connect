@@ -1,0 +1,148 @@
+<section class="dashboard-page">
+  <div class="container">
+
+    <div class="dashboard-header">
+      <div>
+        <p class="page-label">Provider Dashboard</p>
+
+        <h1>
+          Welcome back, <%= current_user.first_name %>
+        </h1>
+
+        <p>
+          Manage your services, bookings, and customers.
+        </p>
+      </div>
+
+      <%= link_to "My Profile",
+                  "#",
+                  class: "provider-button" %>
+    </div>
+
+    <div class="dashboard-stats">
+
+      <div class="dashboard-stat">
+        <span>Pending</span>
+        <strong><%= @pending_bookings %></strong>
+      </div>
+
+      <div class="dashboard-stat">
+        <span>Accepted</span>
+        <strong><%= @accepted_bookings %></strong>
+      </div>
+
+      <div class="dashboard-stat">
+        <span>Confirmed</span>
+        <strong><%= @confirmed_bookings %></strong>
+      </div>
+
+      <div class="dashboard-stat">
+        <span>Completed</span>
+        <strong><%= @completed_bookings %></strong>
+      </div>
+
+    </div>
+
+    <div class="dashboard-section">
+
+      <div class="section-heading">
+        <div>
+          <p class="page-label">Bookings</p>
+          <h2>Customer Requests</h2>
+        </div>
+      </div>
+
+      <% if @bookings.any? %>
+
+        <div class="dashboard-bookings">
+
+          <% @bookings.each do |booking| %>
+
+            <article class="dashboard-booking">
+
+              <div>
+                <p class="booking-provider">
+                  <%= booking.customer.first_name %>
+                  <%= booking.customer.last_name %>
+                </p>
+
+                <h3>
+                  <%= booking.service_category.name %>
+                </h3>
+
+                <p>
+                  <%= booking.scheduled_at.strftime(
+                        "%d %b %Y, %I:%M %p"
+                      ) %>
+                </p>
+
+                <p>
+                  Address:
+                  <%= booking.address.street %>,
+                  <%= booking.address.city %>
+                </p>
+
+                <p>
+                  Estimated Price:
+                  Rs. <%= booking.estimated_price %>
+                </p>
+              </div>
+
+              <div class="dashboard-booking-right">
+
+                <span class="booking-status">
+                  <%= booking.status.humanize %>
+                </span>
+
+                <% if booking.pending? %>
+
+                  <%= button_to "Accept",
+                                provider_accept_booking_path(booking),
+                                method: :patch,
+                                class: "booking-submit-button" %>
+
+                  <%= button_to "Reject",
+                                provider_reject_booking_path(booking),
+                                method: :patch,
+                                class: "cancel-button" %>
+
+                <% elsif booking.confirmed? %>
+
+                  <%= button_to "Start Service",
+                                provider_start_booking_path(booking),
+                                method: :patch,
+                                class: "booking-submit-button" %>
+
+                <% elsif booking.in_progress? %>
+
+                  <%= button_to "Complete Service",
+                                provider_complete_booking_path(booking),
+                                method: :patch,
+                                class: "booking-submit-button" %>
+
+                <% end %>
+
+              </div>
+
+            </article>
+
+          <% end %>
+
+        </div>
+
+      <% else %>
+
+        <div class="empty-state">
+          <h2>No bookings yet</h2>
+
+          <p>
+            Customer booking requests will appear here.
+          </p>
+        </div>
+
+      <% end %>
+
+    </div>
+
+  </div>
+</section>

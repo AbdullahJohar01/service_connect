@@ -1,0 +1,103 @@
+<section class="providers-page">
+  <div class="container">
+
+    <div class="page-header">
+      <% if @service_category %>
+        <p class="page-label">
+          Service Category
+        </p>
+
+        <h1>
+          <%= @service_category.name %> Providers
+        </h1>
+
+        <p>
+          Find trusted professionals offering
+          <%= @service_category.name.downcase %> services.
+        </p>
+      <% else %>
+        <p class="page-label">
+          Service Connect
+        </p>
+
+        <h1>
+          Find Service Providers
+        </h1>
+
+        <p>
+          Browse approved professionals available through Service Connect.
+        </p>
+      <% end %>
+    </div>
+
+    <% if @providers.any? %>
+      <div class="provider-grid">
+        <% @providers.each do |provider| %>
+          <article class="provider-card">
+
+            <div class="provider-card-header">
+              <div class="provider-avatar">
+                <%= provider.business_name.first.upcase %>
+              </div>
+
+              <div>
+                <h2>
+                  <%= provider.business_name %>
+                </h2>
+
+                <p class="provider-rating">
+                  ★ <%= provider.average_rating || "New" %>
+
+                  <% if provider.total_reviews.to_i > 0 %>
+                    (<%= provider.total_reviews %> reviews)
+                  <% end %>
+                </p>
+              </div>
+            </div>
+
+            <p class="provider-description">
+              <%= provider.description.presence ||
+                  "Professional services from a trusted Service Connect provider." %>
+            </p>
+
+            <div class="provider-details">
+              <div>
+                <span>Experience</span>
+
+                <strong>
+                  <%= provider.experience_years %> years
+                </strong>
+              </div>
+
+              <div>
+                <span>Hourly Rate</span>
+
+                <strong>
+                  Rs. <%= provider.hourly_rate %>
+                </strong>
+              </div>
+            </div>
+
+            <%= link_to "View Provider",
+                        provider_path(provider),
+                        class: "provider-button" %>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <h2>No providers found</h2>
+
+        <p>
+          There are currently no approved providers available
+          for this service.
+        </p>
+
+        <%= link_to "Browse All Providers",
+                    providers_path,
+                    class: "provider-button" %>
+      </div>
+    <% end %>
+
+  </div>
+</section>

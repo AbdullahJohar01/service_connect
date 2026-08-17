@@ -1,0 +1,158 @@
+<section class="booking-page">
+  <div class="container">
+
+    <%= link_to "← My Bookings",
+                bookings_path,
+                class: "back-link" %>
+
+    <div class="booking-detail-card">
+
+      <div class="booking-detail-header">
+        <div>
+          <p class="page-label">
+            Booking #<%= @booking.id %>
+          </p>
+
+          <h1>
+            <%= @booking.provider.business_name %>
+          </h1>
+        </div>
+
+        <span class="booking-status">
+          <%= @booking.status.humanize %>
+        </span>
+      </div>
+
+      <div class="booking-detail-grid">
+
+        <div>
+          <span>Service</span>
+          <strong>
+            <%= @booking.service_category.name %>
+          </strong>
+        </div>
+
+        <div>
+          <span>Scheduled</span>
+          <strong>
+            <%= @booking.scheduled_at.strftime(
+                  "%d %b %Y, %I:%M %p"
+                ) %>
+          </strong>
+        </div>
+
+        <div>
+          <span>Duration</span>
+          <strong>
+            <%= @booking.estimated_duration %> minutes
+          </strong>
+        </div>
+
+        <div>
+          <span>Estimated Price</span>
+          <strong>
+            Rs. <%= @booking.estimated_price %>
+          </strong>
+        </div>
+
+        <div>
+          <span>Address</span>
+          <strong>
+            <%= @booking.address.street %>,
+            <%= @booking.address.city %>
+          </strong>
+        </div>
+
+        <div>
+          <span>Created</span>
+          <strong>
+            <%= @booking.created_at.strftime("%d %b %Y") %>
+          </strong>
+        </div>
+
+      </div>
+
+      <div class="booking-description">
+        <h2>Service Description</h2>
+
+        <p>
+          <%= @booking.customer_description %>
+        </p>
+      </div>
+
+      <% if @booking.pending? %>
+        <div class="booking-actions">
+
+          <p>
+            Your booking is waiting for the provider to accept it.
+          </p>
+
+          <%= form_with url: booking_confirm_path(@booking),
+                        method: :patch,
+                        local: true do %>
+            <%= submit_tag "Confirm Booking",
+                           class: "booking-submit-button" %>
+          <% end %>
+
+          <%= form_with url: booking_cancel_path(@booking),
+                        method: :patch,
+                        local: true do %>
+            <%= submit_tag "Cancel Booking",
+                           class: "cancel-button" %>
+          <% end %>
+
+        </div>
+      <% end %>
+
+      <% if @booking.accepted? %>
+        <div class="booking-actions">
+
+          <p>
+            The provider accepted your booking.
+            Please confirm it to continue.
+          </p>
+
+          <%= form_with url: booking_confirm_path(@booking),
+                        method: :patch,
+                        local: true do %>
+            <%= submit_tag "Confirm Booking",
+                           class: "booking-submit-button" %>
+          <% end %>
+
+        </div>
+      <% end %>
+
+      <% if @booking.confirmed? %>
+        <div class="booking-info-message">
+          Your booking is confirmed. The provider will start the
+          service at the scheduled time.
+        </div>
+      <% end %>
+
+      <% if @booking.in_progress? %>
+        <div class="booking-info-message">
+          Your service is currently in progress.
+        </div>
+      <% end %>
+
+      <% if @booking.completed? %>
+        <div class="booking-completed">
+
+          <h2>Service Completed</h2>
+
+          <p>
+            Your service has been completed.
+            We hope you had a great experience.
+          </p>
+
+          <%= link_to "Leave a Review",
+                      "#review",
+                      class: "booking-submit-button" %>
+
+        </div>
+      <% end %>
+
+    </div>
+
+  </div>
+</section>

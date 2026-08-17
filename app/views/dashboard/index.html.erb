@@ -1,0 +1,117 @@
+<section class="dashboard-page">
+  <div class="container">
+
+    <div class="dashboard-header">
+      <div>
+        <p class="page-label">Customer Dashboard</p>
+
+        <h1>
+          Welcome back, <%= current_user.first_name %>
+        </h1>
+
+        <p>
+          Manage your bookings and find trusted service providers.
+        </p>
+      </div>
+
+      <%= link_to "Find a Service",
+                  providers_path,
+                  class: "provider-button" %>
+    </div>
+
+    <div class="dashboard-stats">
+
+      <div class="dashboard-stat">
+        <span>Total Bookings</span>
+        <strong><%= @total_bookings %></strong>
+      </div>
+
+      <div class="dashboard-stat">
+        <span>Pending</span>
+        <strong><%= @pending_bookings %></strong>
+      </div>
+
+      <div class="dashboard-stat">
+        <span>Completed</span>
+        <strong><%= @completed_bookings %></strong>
+      </div>
+
+    </div>
+
+    <div class="dashboard-section">
+
+      <div class="section-heading">
+        <div>
+          <p class="page-label">Recent Activity</p>
+          <h2>Recent Bookings</h2>
+        </div>
+
+        <%= link_to "View All",
+                    bookings_path,
+                    class: "text-link" %>
+      </div>
+
+      <% if @bookings.any? %>
+
+        <div class="dashboard-bookings">
+
+          <% @bookings.each do |booking| %>
+
+            <article class="dashboard-booking">
+
+              <div>
+                <p class="booking-provider">
+                  <%= booking.provider.business_name %>
+                </p>
+
+                <h3>
+                  <%= booking.service_category.name %>
+                </h3>
+
+                <p>
+                  <%= booking.scheduled_at.strftime(
+                        "%d %b %Y, %I:%M %p"
+                      ) %>
+                </p>
+              </div>
+
+              <div class="dashboard-booking-right">
+
+                <span class="booking-status">
+                  <%= booking.status.humanize %>
+                </span>
+
+                <%= link_to "View",
+                            booking_path(booking),
+                            class: "provider-button" %>
+
+              </div>
+
+            </article>
+
+          <% end %>
+
+        </div>
+
+      <% else %>
+
+        <div class="empty-state">
+
+          <h2>No bookings yet</h2>
+
+          <p>
+            Find a trusted provider and book your first service.
+          </p>
+
+          <%= link_to "Find Providers",
+                      providers_path,
+                      class: "provider-button" %>
+
+        </div>
+
+      <% end %>
+
+    </div>
+
+  </div>
+</section>

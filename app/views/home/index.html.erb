@@ -1,0 +1,71 @@
+<header class="site-header">
+  <div class="container header-content">
+    <%= link_to "Service Connect", root_path, class: "logo" %>
+
+    <nav>
+      <% if user_signed_in? %>
+        <span class="welcome-text">
+          Hi, <%= current_user.first_name %>
+        </span>
+
+        <%= button_to "Logout",
+                      logout_path,
+                      method: :delete,
+                      class: "nav-button" %>
+      <% else %>
+        <%= link_to "Login",
+                    login_path,
+                    class: "nav-link" %>
+      <% end %>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Find Trusted Service Providers</h1>
+
+    <p>
+      Service Connect helps customers find reliable service providers
+      for their everyday needs. Browse services, compare providers,
+      book appointments, and manage your bookings in one place.
+    </p>
+
+    <%= link_to "Find a Service", "#services", class: "hero-button" %>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="container">
+    <h2>Popular Services</h2>
+
+    <% if @service_categories.any? %>
+      <div class="service-grid">
+        <% @service_categories.each do |category| %>
+          <div class="service-card">
+            <h3>
+              <%= category.name %>
+            </h3>
+
+            <p>
+              <%= category.description.presence ||
+                  "Find trusted professionals for #{category.name.downcase} services." %>
+            </p>
+
+            <%= link_to "View Providers",
+                        providers_path(service_category_id: category.id),
+                        class: "service-link" %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <h3>No services available yet</h3>
+
+        <p>
+          Service categories will appear here when they become available.
+        </p>
+      </div>
+    <% end %>
+  </div>
+</section>

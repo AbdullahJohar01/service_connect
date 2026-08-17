@@ -1,0 +1,83 @@
+<section class="page-section">
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <p class="page-label">Provider Profile</p>
+        <h1><%= @provider_profile.business_name %></h1>
+      </div>
+
+      <%= link_to "Edit Profile",
+                  edit_provider_profile_path,
+                  class: "primary-button" %>
+    </div>
+
+    <% if flash[:notice] %>
+      <div class="success-message">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <% if flash[:alert] %>
+      <div class="alert-message">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <div class="profile-card">
+      <div class="profile-row">
+        <strong>Business Name</strong>
+        <span><%= @provider_profile.business_name %></span>
+      </div>
+
+      <div class="profile-row">
+        <strong>Description</strong>
+        <span>
+          <%= @provider_profile.description.presence || "No description provided." %>
+        </span>
+      </div>
+
+      <div class="profile-row">
+        <strong>Experience</strong>
+        <span>
+          <%= @provider_profile.experience_years %> years
+        </span>
+      </div>
+
+      <div class="profile-row">
+        <strong>Hourly Rate</strong>
+        <span>
+          <%= number_to_currency(@provider_profile.hourly_rate) %>
+        </span>
+      </div>
+
+      <div class="profile-row">
+        <strong>Approval Status</strong>
+        <span>
+          <%= @provider_profile.approval_status.humanize %>
+        </span>
+      </div>
+
+      <div class="profile-row">
+        <strong>Rating</strong>
+        <span>
+          <%= @provider_profile.average_rating %> / 5
+          (<%= @provider_profile.total_reviews %> reviews)
+        </span>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <%= link_to "Manage Services",
+                  provider_services_path,
+                  class: "secondary-button" %>
+
+      <%= link_to "Manage Availability",
+                  provider_availabilities_path,
+                  class: "secondary-button" %>
+
+      <%= link_to "Provider Dashboard",
+                  provider_dashboard_path,
+                  class: "secondary-button" %>
+    </div>
+  </div>
+</section>
