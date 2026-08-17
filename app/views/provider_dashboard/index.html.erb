@@ -10,12 +10,12 @@
         </h1>
 
         <p>
-          Manage your services, bookings, and customers.
+          Manage your services, availability, bookings, and profile.
         </p>
       </div>
 
       <%= link_to "My Profile",
-                  "#",
+                  provider_profile_path,
                   class: "provider-button" %>
     </div>
 
@@ -39,6 +39,33 @@
       <div class="dashboard-stat">
         <span>Completed</span>
         <strong><%= @completed_bookings %></strong>
+      </div>
+
+    </div>
+
+    <div class="dashboard-section">
+
+      <div class="section-heading">
+        <div>
+          <p class="page-label">Provider Management</p>
+          <h2>Quick Actions</h2>
+        </div>
+      </div>
+
+      <div class="dashboard-actions">
+
+        <%= link_to "My Profile",
+                    provider_profile_path,
+                    class: "provider-button" %>
+
+        <%= link_to "My Services",
+                    provider_services_path,
+                    class: "provider-button" %>
+
+        <%= link_to "My Availability",
+                    provider_availabilities_path,
+                    class: "provider-button" %>
+
       </div>
 
     </div>
