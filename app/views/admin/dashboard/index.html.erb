@@ -1,0 +1,297 @@
+<div class="admin-dashboard">
+  <div class="admin-header">
+    <div>
+      <h1>Admin Dashboard</h1>
+      <p>Manage service provider approvals.</p>
+    </div>
+  </div>
+
+  <% if notice.present? %>
+    <div class="alert alert-success">
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <% if alert.present? %>
+    <div class="alert alert-error">
+      <%= alert %>
+    </div>
+  <% end %>
+
+  <!-- Pending Providers -->
+  <section class="admin-section">
+    <div class="section-header">
+      <h2>Pending Providers</h2>
+      <span class="count"><%= @pending_providers.count %></span>
+    </div>
+
+    <% if @pending_providers.any? %>
+      <div class="provider-list">
+        <% @pending_providers.each do |provider| %>
+          <div class="provider-card">
+            <div class="provider-info">
+              <h3><%= provider.business_name %></h3>
+
+              <% if provider.user.present? %>
+                <p>
+                  <strong>Name:</strong>
+                  <%= provider.user.first_name %>
+                  <%= provider.user.last_name %>
+                </p>
+
+                <p>
+                  <strong>Email:</strong>
+                  <%= provider.user.email %>
+                </p>
+              <% end %>
+
+              <p>
+                <strong>Experience:</strong>
+                <%= provider.experience_years || 0 %> years
+              </p>
+
+              <% if provider.hourly_rate.present? %>
+                <p>
+                  <strong>Hourly Rate:</strong>
+                  <%= provider.hourly_rate %>
+                </p>
+              <% end %>
+            </div>
+
+            <div class="provider-actions">
+              <%= button_to "Approve",
+                  admin_approve_provider_path(provider),
+                  method: :patch,
+                  class: "btn btn-approve" %>
+
+              <%= button_to "Reject",
+                  admin_reject_provider_path(provider),
+                  method: :patch,
+                  class: "btn btn-reject" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="empty-state">No providers are waiting for approval.</p>
+    <% end %>
+  </section>
+
+  <!-- Approved Providers -->
+  <section class="admin-section">
+    <div class="section-header">
+      <h2>Approved Providers</h2>
+      <span class="count"><%= @approved_providers.count %></span>
+    </div>
+
+    <% if @approved_providers.any? %>
+      <div class="provider-list">
+        <% @approved_providers.each do |provider| %>
+          <div class="provider-card">
+            <div class="provider-info">
+              <h3><%= provider.business_name %></h3>
+
+              <% if provider.user.present? %>
+                <p>
+                  <strong>Name:</strong>
+                  <%= provider.user.first_name %>
+                  <%= provider.user.last_name %>
+                </p>
+
+                <p>
+                  <strong>Email:</strong>
+                  <%= provider.user.email %>
+                </p>
+              <% end %>
+
+              <p class="status approved">
+                Approved
+              </p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="empty-state">No approved providers yet.</p>
+    <% end %>
+  </section>
+
+  <!-- Rejected Providers -->
+  <section class="admin-section">
+    <div class="section-header">
+      <h2>Rejected Providers</h2>
+      <span class="count"><%= @rejected_providers.count %></span>
+    </div>
+
+    <% if @rejected_providers.any? %>
+      <div class="provider-list">
+        <% @rejected_providers.each do |provider| %>
+          <div class="provider-card">
+            <div class="provider-info">
+              <h3><%= provider.business_name %></h3>
+
+              <% if provider.user.present? %>
+                <p>
+                  <strong>Name:</strong>
+                  <%= provider.user.first_name %>
+                  <%= provider.user.last_name %>
+                </p>
+
+                <p>
+                  <strong>Email:</strong>
+                  <%= provider.user.email %>
+                </p>
+              <% end %>
+
+              <p class="status rejected">
+                Rejected
+              </p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="empty-state">No rejected providers.</p>
+    <% end %>
+  </section>
+</div>
+
+<style>
+  .admin-dashboard {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .admin-header {
+    margin-bottom: 30px;
+  }
+
+  .admin-header h1 {
+    margin-bottom: 8px;
+  }
+
+  .admin-header p {
+    color: #666;
+  }
+
+  .alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+
+  .alert-success {
+    background: #e8f7ee;
+    color: #216e3a;
+  }
+
+  .alert-error {
+    background: #fdecec;
+    color: #a12626;
+  }
+
+  .admin-section {
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .section-header h2 {
+    margin: 0;
+  }
+
+  .count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border-radius: 14px;
+    background: #eee;
+    font-size: 14px;
+  }
+
+  .provider-list {
+    display: grid;
+    gap: 15px;
+  }
+
+  .provider-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .provider-info h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  .provider-info p {
+    margin: 6px 0;
+  }
+
+  .provider-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .btn-approve {
+    background: #198754;
+    color: white;
+  }
+
+  .btn-reject {
+    background: #dc3545;
+    color: white;
+  }
+
+  .status {
+    font-weight: 600;
+  }
+
+  .status.approved {
+    color: #198754;
+  }
+
+  .status.rejected {
+    color: #dc3545;
+  }
+
+  .empty-state {
+    padding: 20px;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    color: #666;
+  }
+
+  @media (max-width: 700px) {
+    .provider-card {
+      flex-direction: column;
+    }
+
+    .provider-actions {
+      align-items: flex-start;
+    }
+  }
+</style>

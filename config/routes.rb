@@ -148,6 +148,23 @@ Rails.application.routes.draw do
          to: "availabilities#destroy",
          as: :delete_provider_availability
 
+  # ------------------------------------------------------------
+  # Admin Web Application
+  # ------------------------------------------------------------
+
+  namespace :admin do
+    get "dashboard",
+        to: "dashboard#index"
+
+    patch "providers/:id/approve",
+          to: "dashboard#approve_provider",
+          as: :approve_provider
+
+    patch "providers/:id/reject",
+          to: "dashboard#reject_provider",
+          as: :reject_provider
+  end
+
   # ============================================================
   # API V1
   # ============================================================
