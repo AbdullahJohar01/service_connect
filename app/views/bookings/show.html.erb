@@ -87,13 +87,6 @@
             Your booking is waiting for the provider to accept it.
           </p>
 
-          <%= form_with url: booking_confirm_path(@booking),
-                        method: :patch,
-                        local: true do %>
-            <%= submit_tag "Confirm Booking",
-                           class: "booking-submit-button" %>
-          <% end %>
-
           <%= form_with url: booking_cancel_path(@booking),
                         method: :patch,
                         local: true do %>
@@ -117,6 +110,13 @@
                         local: true do %>
             <%= submit_tag "Confirm Booking",
                            class: "booking-submit-button" %>
+          <% end %>
+
+          <%= form_with url: booking_cancel_path(@booking),
+                        method: :patch,
+                        local: true do %>
+            <%= submit_tag "Cancel Booking",
+                           class: "cancel-button" %>
           <% end %>
 
         </div>
