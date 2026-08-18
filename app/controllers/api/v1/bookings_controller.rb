@@ -87,6 +87,18 @@ class Api::V1::BookingsController < Api::V1::BaseController
   end
 
   def complete
+    completion_params = completion_booking_params
+
+    unless completion_params.empty?
+      unless @booking.update(completion_params)
+        render json: {
+          error: "Booking could not be completed",
+          errors: @booking.errors.full_messages
+        }, status: :unprocessable_entity
+        return
+      end
+    end
+
     change_booking_status("completed")
   end
 
@@ -147,7 +159,16 @@ class Api::V1::BookingsController < Api::V1::BaseController
       :scheduled_at,
       :estimated_duration,
       :customer_description,
-      :estimated_price
+      :estimated_price,
+      :final_price,
+      :provider_notes
+    )
+  end
+
+  def completion_booking_params
+    params.fetch(:booking, {}).permit(
+      :final_price,
+      :provider_notes
     )
   end
 
