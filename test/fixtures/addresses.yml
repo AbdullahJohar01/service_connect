@@ -1,0 +1,19 @@
+one:
+  user: one
+  label: Home
+  street: Block B, Pak Arab Housing Society, Ferozepur Road
+  city: Lahore
+  postal_code: "54000"
+  latitude: 31.4670
+  longitude: 74.3310
+  is_default: true
+
+two:
+  user: two
+  label: Office
+  street: 1st & 2nd Floor, Plaza No 148-D, Phase 8 Broadway, DHA Lahore Cantt
+  city: Lahore
+  postal_code: "54792"
+  latitude: 31.4697
+  longitude: 74.4011
+  is_default: true

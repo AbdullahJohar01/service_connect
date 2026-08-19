@@ -1,0 +1,74 @@
+<section class="page-section">
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <p class="page-label">Provider Services</p>
+        <h1>Add Service</h1>
+      </div>
+    </div>
+
+    <% if flash[:alert] %>
+      <div class="alert-message">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <div class="form-card">
+      <%= form_with model: @provider_service,
+                    url: provider_services_path,
+                    method: :post,
+                    local: true do |form| %>
+
+        <div class="form-group">
+          <%= form.label :service_category_id, "Service Category" %>
+
+          <%= form.collection_select :service_category_id,
+                @service_categories,
+                :id,
+                :name,
+                { prompt: "Select a service category" },
+                { required: true } %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :description %>
+
+          <%= form.text_area :description,
+                rows: 5,
+                placeholder: "Describe the service you provide..." %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :base_price %>
+
+          <%= form.number_field :base_price,
+                min: 0,
+                step: 0.01,
+                required: true %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :duration_minutes %>
+
+          <%= form.number_field :duration_minutes,
+                min: 1,
+                required: true %>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <%= form.check_box :active %>
+          <%= form.label :active, "Active service" %>
+        </div>
+
+        <div class="form-actions">
+          <%= form.submit "Create Service",
+                class: "primary-button" %>
+
+          <%= link_to "Cancel",
+                      provider_services_path,
+                      class: "secondary-button" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

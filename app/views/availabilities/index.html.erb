@@ -1,0 +1,81 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>My Availability</h1>
+      <p>Manage the days and hours when customers can book your services.</p>
+    </div>
+
+    <%= link_to "Add Availability",
+                new_provider_availability_path,
+                class: "btn btn-primary" %>
+  </div>
+
+  <% if @availabilities.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @availabilities.each do |availability| %>
+              <tr>
+                <td>
+                  <%= Date::DAYNAMES[availability.day_of_week] %>
+                </td>
+
+                <td>
+                  <%= availability.start_time.strftime("%I:%M %p") %>
+                </td>
+
+                <td>
+                  <%= availability.end_time.strftime("%I:%M %p") %>
+                </td>
+
+                <td>
+                  <% if availability.active %>
+                    <span class="status-badge status-success">Active</span>
+                  <% else %>
+                    <span class="status-badge status-secondary">Inactive</span>
+                  <% end %>
+                </td>
+
+                <td>
+                  <div class="action-buttons">
+                    <%= link_to "Edit",
+                                edit_provider_availability_path(availability),
+                                class: "btn btn-secondary btn-sm" %>
+
+                    <%= button_to "Delete",
+                                  delete_provider_availability_path(availability),
+                                  method: :delete,
+                                  class: "btn btn-danger btn-sm",
+                                  data: {
+                                    turbo_confirm: "Are you sure you want to delete this availability?"
+                                  } %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <h2>No availability added yet</h2>
+      <p>Add your working hours so customers know when they can book you.</p>
+
+      <%= link_to "Add Your First Availability",
+                  new_provider_availability_path,
+                  class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

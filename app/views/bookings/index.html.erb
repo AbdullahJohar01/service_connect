@@ -1,0 +1,78 @@
+<section class="bookings-page">
+  <div class="container">
+
+    <div class="page-header">
+      <p class="page-label">My Account</p>
+
+      <h1>My Bookings</h1>
+
+      <p>
+        Track your current and previous service bookings.
+      </p>
+    </div>
+
+    <% if @bookings.any? %>
+
+      <div class="booking-list">
+
+        <% @bookings.each do |booking| %>
+          <article class="booking-card">
+
+            <div>
+              <p class="booking-provider">
+                <%= booking.provider.business_name %>
+              </p>
+
+              <h2>
+                <%= booking.service_category.name %>
+              </h2>
+
+              <p>
+                <%= booking.customer_description %>
+              </p>
+            </div>
+
+            <div class="booking-card-details">
+              <span>
+                <strong>Status</strong>
+                <%= booking.status.humanize %>
+              </span>
+
+              <span>
+                <strong>Date</strong>
+                <%= booking.scheduled_at.strftime("%d %b %Y, %I:%M %p") %>
+              </span>
+
+              <span>
+                <strong>Price</strong>
+                Rs. <%= booking.estimated_price %>
+              </span>
+
+              <%= link_to "View Booking",
+                          booking_path(booking),
+                          class: "provider-button" %>
+            </div>
+
+          </article>
+        <% end %>
+
+      </div>
+
+    <% else %>
+
+      <div class="empty-state">
+        <h2>No bookings yet</h2>
+
+        <p>
+          Find a provider and book your first service.
+        </p>
+
+        <%= link_to "Find Providers",
+                    providers_path,
+                    class: "provider-button" %>
+      </div>
+
+    <% end %>
+
+  </div>
+</section>

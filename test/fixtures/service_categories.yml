@@ -1,0 +1,9 @@
+one:
+  name: Electrical
+  description: Electrical repair services
+  active: true
+
+two:
+  name: Plumbing
+  description: Plumbing and water repair services
+  active: true

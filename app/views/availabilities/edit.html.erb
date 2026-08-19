@@ -1,0 +1,74 @@
+<section class="page-section">
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <p class="page-label">Availability</p>
+        <h1>Edit Availability</h1>
+        <p>Update your available day and working hours.</p>
+      </div>
+    </div>
+
+    <% if flash[:alert] %>
+      <div class="alert-message">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <% if @availability.errors.any? %>
+      <div class="alert-message">
+        <strong>Please correct the following:</strong>
+
+        <ul>
+          <% @availability.errors.full_messages.each do |error| %>
+            <li><%= error %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-card">
+      <%= form_with model: @availability,
+                    url: provider_availability_path(@availability),
+                    method: :patch,
+                    local: true do |form| %>
+
+        <div class="form-group">
+          <%= form.label :day_of_week, "Day" %>
+
+          <%= form.select :day_of_week,
+                Date::DAYNAMES.each_with_index.map { |day, index| [ day, index ] },
+                {},
+                { required: true } %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :start_time, "Start Time" %>
+
+          <%= form.time_field :start_time,
+                required: true %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :end_time, "End Time" %>
+
+          <%= form.time_field :end_time,
+                required: true %>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <%= form.check_box :active %>
+          <%= form.label :active, "Active availability" %>
+        </div>
+
+        <div class="form-actions">
+          <%= form.submit "Save Changes",
+                class: "primary-button" %>
+
+          <%= link_to "Cancel",
+                      provider_availabilities_path,
+                      class: "secondary-button" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

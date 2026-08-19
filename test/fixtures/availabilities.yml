@@ -1,0 +1,13 @@
+one:
+  provider_profile: one
+  day_of_week: 1
+  start_time: "09:00"
+  end_time: "17:00"
+  active: true
+
+two:
+  provider_profile: two
+  day_of_week: 2
+  start_time: "09:00"
+  end_time: "17:00"
+  active: true

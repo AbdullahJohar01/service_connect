@@ -13,6 +13,7 @@ gem "puma", ">= 5.0"
 
 # Authentication
 gem "bcrypt", "~> 3.1.7"
+gem "jwt"
 
 # JavaScript
 gem "importmap-rails"

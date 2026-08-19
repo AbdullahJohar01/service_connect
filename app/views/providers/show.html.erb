@@ -1,0 +1,251 @@
+<section class="provider-detail-page">
+  <div class="container">
+
+    <%= link_to "← Back to Providers",
+                providers_path,
+                class: "back-link" %>
+
+    <div class="provider-profile-header">
+
+      <div class="large-provider-avatar">
+        <%= @provider.business_name.first.upcase %>
+      </div>
+
+      <div class="provider-profile-info">
+        <p class="page-label">
+          Verified Service Provider
+        </p>
+
+        <h1>
+          <%= @provider.business_name %>
+        </h1>
+
+        <p class="provider-rating-large">
+          ★ <%= @provider.average_rating %>
+
+          <% if @provider.total_reviews.to_i > 0 %>
+            · <%= @provider.total_reviews %> reviews
+          <% else %>
+            · No reviews yet
+          <% end %>
+        </p>
+
+        <p class="provider-profile-description">
+          <%= @provider.description.presence ||
+              "Professional services provided through Service Connect." %>
+        </p>
+      </div>
+
+      <div class="provider-profile-price">
+        <span>Hourly rate</span>
+
+        <strong>
+          Rs. <%= @provider.hourly_rate %>
+        </strong>
+      </div>
+
+    </div>
+
+    <div class="provider-info-grid">
+
+      <section class="provider-section">
+        <h2>About This Provider</h2>
+
+        <div class="about-details">
+          <div>
+            <span>Experience</span>
+
+            <strong>
+              <%= @provider.experience_years %> years
+            </strong>
+          </div>
+
+          <div>
+            <span>Rating</span>
+
+            <strong>
+              <%= @provider.average_rating %> / 5
+            </strong>
+          </div>
+
+          <div>
+            <span>Total Reviews</span>
+
+            <strong>
+              <%= @provider.total_reviews %>
+            </strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="provider-section">
+        <h2>Services Offered</h2>
+
+        <% if @provider_services.any? %>
+          <div class="service-list">
+            <% @provider_services.each do |service| %>
+              <div class="provider-service-item">
+
+                <div>
+                  <h3>
+                    <%= service.service_category.name %>
+                  </h3>
+
+                  <p>
+                    <%= service.description.presence ||
+                        "Professional #{service.service_category.name.downcase} service." %>
+                  </p>
+                </div>
+
+                <div class="service-price">
+                  <strong>
+                    Rs. <%= service.base_price %>
+                  </strong>
+
+                  <span>
+                    <%= service.duration_minutes %> minutes
+                  </span>
+                </div>
+
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="muted-text">
+            No services are currently listed.
+          </p>
+        <% end %>
+      </section>
+
+    </div>
+
+    <section class="provider-section availability-section">
+      <h2>Availability</h2>
+
+      <% if @availabilities.any? %>
+        <div class="availability-list">
+
+          <% day_names = %w[
+            Sunday
+            Monday
+            Tuesday
+            Wednesday
+            Thursday
+            Friday
+            Saturday
+          ] %>
+
+          <% @availabilities.each do |availability| %>
+            <div class="availability-item">
+
+              <strong>
+                <%= day_names[availability.day_of_week] ||
+                    "Day #{availability.day_of_week}" %>
+              </strong>
+
+              <span>
+                <%= availability.start_time.strftime("%I:%M %p") %>
+                -
+                <%= availability.end_time.strftime("%I:%M %p") %>
+              </span>
+
+            </div>
+          <% end %>
+
+        </div>
+      <% else %>
+        <p class="muted-text">
+          No availability has been added yet.
+        </p>
+      <% end %>
+    </section>
+
+    <section class="provider-section reviews-section">
+      <div class="section-heading">
+        <div>
+          <h2>Customer Reviews</h2>
+
+          <p>
+            Feedback from customers who booked this provider.
+          </p>
+        </div>
+
+        <% if @provider.total_reviews.to_i > 0 %>
+          <div class="review-summary">
+            <strong>
+              ★ <%= @provider.average_rating %>
+            </strong>
+
+            <span>
+              <%= @provider.total_reviews %> reviews
+            </span>
+          </div>
+        <% end %>
+      </div>
+
+      <% if @reviews.any? %>
+        <div class="review-list">
+
+          <% @reviews.each do |review| %>
+            <article class="review-card">
+
+              <div class="review-header">
+
+                <div class="review-customer">
+                  <div class="review-avatar">
+                    <%= review.customer.first_name.first.upcase %>
+                  </div>
+
+                  <div>
+                    <strong>
+                      <%= review.customer.first_name %>
+                      <%= review.customer.last_name %>
+                    </strong>
+
+                    <span>
+                      <%= review.created_at.strftime("%d %b %Y") %>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="review-rating">
+                  ★ <%= review.rating %>/5
+                </div>
+
+              </div>
+
+              <p>
+                <%= review.comment %>
+              </p>
+
+            </article>
+          <% end %>
+
+        </div>
+      <% else %>
+        <div class="empty-state">
+          <h3>No reviews yet</h3>
+
+          <p>
+            Be the first customer to review this provider.
+          </p>
+        </div>
+      <% end %>
+    </section>
+
+    <div class="booking-cta">
+      <div>
+        <h2>Need this service?</h2>
+
+        <p>
+          Book this provider through Service Connect.
+        </p>
+      </div>
+
+      <%= link_to "Book a Service",
+            new_booking_path(provider_id: @provider.id),
+            class: "booking-button" %>
+    </div>
+
+  </div>
+</section>

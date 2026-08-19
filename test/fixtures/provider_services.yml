@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  provider_profile: one
+  service_category: one
+  description: MyText
+  base_price: 9.99
+  duration_minutes: 1
+  active: false
+
+two:
+  provider_profile: two
+  service_category: two
+  description: MyText
+  base_price: 9.99
+  duration_minutes: 1
+  active: false

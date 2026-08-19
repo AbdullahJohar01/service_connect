@@ -1,0 +1,149 @@
+<section class="booking-page">
+  <div class="container">
+
+    <%= link_to "← Back to Provider",
+                provider_path(@provider),
+                class: "back-link" %>
+
+    <div class="booking-header">
+      <p class="page-label">Book a Service</p>
+
+      <h1>
+        Book <%= @provider.business_name %>
+      </h1>
+
+      <p>
+        Choose a service, date, time, and your address.
+      </p>
+    </div>
+
+    <% if @booking.errors.any? %>
+      <div class="booking-errors">
+        <strong>Please fix the following:</strong>
+
+        <ul>
+          <% @booking.errors.full_messages.each do |error| %>
+            <li><%= error %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with model: @booking,
+                  url: bookings_path,
+                  method: :post,
+                  local: true do |form| %>
+
+      <%= form.hidden_field :provider_id,
+                            value: @provider.id %>
+
+      <div class="booking-form-grid">
+
+        <div class="booking-form-card">
+
+          <h2>Service Details</h2>
+
+          <div class="form-group">
+            <%= form.label :service_category_id, "Service" %>
+
+            <%= form.collection_select(
+                  :service_category_id,
+                  @provider_services,
+                  :service_category_id,
+                  :service_category_name,
+                  { prompt: "Select a service" },
+                  { required: true }
+                ) %>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :scheduled_at, "Date and Time" %>
+
+            <%= form.datetime_local_field :scheduled_at,
+                  required: true %>
+
+            <small>
+              Select a time within the provider's availability.
+            </small>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :estimated_duration, "Duration (minutes)" %>
+
+            <%= form.number_field :estimated_duration,
+                  min: 1,
+                  required: true,
+                  value: @provider_services.first&.duration_minutes %>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :estimated_price, "Estimated Price (Rs.)" %>
+
+            <%= form.number_field :estimated_price,
+                  min: 0,
+                  step: 0.01,
+                  required: true,
+                  value: @provider_services.first&.base_price %>
+          </div>
+
+        </div>
+
+        <div class="booking-form-card">
+
+          <h2>Your Address</h2>
+
+          <div class="form-group">
+            <%= form.label :address_id, "Service Address" %>
+
+            <%= form.collection_select(
+      :address_id,
+      @addresses,
+      :id,
+      :label,
+      { prompt: "Select an address" },
+      { required: true }
+    ) %>
+          </div>
+
+          <div class="address-preview">
+            <% @addresses.each do |address| %>
+              <div>
+                <strong>
+                  <%= address.label %>
+                </strong>
+
+                <span>
+                  <%= address.street %>,
+                  <%= address.city %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+
+          <h2 class="booking-description-heading">
+            Service Description
+          </h2>
+
+          <div class="form-group">
+            <%= form.label :customer_description,
+                           "Describe what you need" %>
+
+            <%= form.text_area :customer_description,
+                  rows: 6,
+                  required: true,
+                  placeholder: "Describe the work you need..." %>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="booking-submit-section">
+        <%= form.submit "Create Booking",
+                        class: "booking-submit-button" %>
+      </div>
+
+    <% end %>
+
+  </div>
+</section>
