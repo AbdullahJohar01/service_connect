@@ -19,22 +19,27 @@
         <%= link_to "Service Connect", root_path, class: "logo" %>
 
         <nav class="nav-links">
-  <%= link_to "Home", root_path %>
-  <%= link_to "Services", root_path(anchor: "services") %>
-  <%= link_to "Providers", providers_path %>
+          <%= link_to "Home", root_path %>
+          <%= link_to "Services", root_path(anchor: "services") %>
+          <%= link_to "Providers", providers_path %>
 
-  <% if user_signed_in? %>
-    <%= link_to "Dashboard", dashboard_path %>
-    <%= link_to "My Bookings", bookings_path %>
+          <% if user_signed_in? %>
+            <%= link_to "Dashboard", dashboard_path %>
 
-    <%= button_to "Logout",
-                  logout_path,
-                  method: :delete,
-                  class: "login-button" %>
-  <% else %>
-    <%= link_to "Login", login_path, class: "login-button" %>
-  <% end %>
-</nav>
+            <% if current_user.provider? %>
+              <%= link_to "My Bookings", provider_dashboard_path %>
+            <% else %>
+              <%= link_to "My Bookings", bookings_path %>
+            <% end %>
+
+            <%= button_to "Logout",
+                          logout_path,
+                          method: :delete,
+                          class: "login-button" %>
+          <% else %>
+            <%= link_to "Login", login_path, class: "login-button" %>
+          <% end %>
+        </nav>
       </div>
     </header>
 
