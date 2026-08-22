@@ -4,7 +4,8 @@ class BookingsController < ApplicationController
   before_action :set_booking, only: [
     :show,
     :confirm,
-    :cancel
+    :cancel,
+    :create_review
   ]
 
   def index
@@ -75,6 +76,7 @@ class BookingsController < ApplicationController
   end
 
   def show
+    @review = @booking.review || Review.new
   end
 
   def confirm
@@ -86,6 +88,37 @@ class BookingsController < ApplicationController
       "cancelled",
       params[:cancellation_reason]
     )
+  end
+
+  def create_review
+    unless @booking.completed?
+      redirect_to booking_path(@booking),
+                  alert: "A review can only be submitted after the booking is completed."
+      return
+    end
+
+    if @booking.review.present?
+      redirect_to booking_path(@booking),
+                  alert: "You have already reviewed this booking."
+      return
+    end
+
+    @review = @booking.build_review(
+      customer: current_user,
+      provider: @booking.provider,
+      rating: review_params[:rating],
+      comment: review_params[:comment]
+    )
+
+    if @review.save
+      redirect_to booking_path(@booking),
+                  notice: "Thank you. Your review was submitted successfully."
+    else
+      @review = @booking.review || @review
+
+      flash.now[:alert] = "Please correct the review details."
+      render :show, status: :unprocessable_content
+    end
   end
 
   private
@@ -142,6 +175,13 @@ class BookingsController < ApplicationController
       :estimated_duration,
       :customer_description,
       :estimated_price
+    )
+  end
+
+  def review_params
+    params.require(:review).permit(
+      :rating,
+      :comment
     )
   end
 end

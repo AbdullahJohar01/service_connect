@@ -2,7 +2,9 @@ Rails.application.routes.draw do
   if Rails.env.development?
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
   end
+
   post "/graphql", to: "graphql#execute"
+
   # ============================================================
   # WEB APPLICATION
   # ============================================================
@@ -56,6 +58,7 @@ Rails.application.routes.draw do
     member do
       patch :confirm
       patch :cancel
+      post :review, to: "bookings#create_review"
     end
   end
 
@@ -168,8 +171,13 @@ Rails.application.routes.draw do
           to: "dashboard#reject_provider",
           as: :reject_provider
 
-    patch "users/:id/suspend", to: "dashboard#suspend_user", as: :suspend_user
-    patch "users/:id/reactivate", to: "dashboard#reactivate_user", as: :reactivate_user
+    patch "users/:id/suspend",
+          to: "dashboard#suspend_user",
+          as: :suspend_user
+
+    patch "users/:id/reactivate",
+          to: "dashboard#reactivate_user",
+          as: :reactivate_user
   end
 
   # ============================================================
@@ -309,7 +317,6 @@ Rails.application.routes.draw do
   delete "/api/v1/notifications/:id",
          to: "api/v1/notifications#destroy"
 
-
   # ------------------------------------------------------------
   # Availability API
   # ------------------------------------------------------------
@@ -384,10 +391,10 @@ Rails.application.routes.draw do
         to: "api/v1/addresses#update"
 
   delete "/api/v1/addresses/:id",
-      to: "api/v1/addresses#destroy"
+         to: "api/v1/addresses#destroy"
 
   patch "/api/v1/addresses/:id/set_default",
-      to: "api/v1/addresses#set_default"
+        to: "api/v1/addresses#set_default"
 
   # ------------------------------------------------------------
   # Customer Profile API
@@ -420,7 +427,12 @@ Rails.application.routes.draw do
        to: "api/v1/provider_profile_images#create"
 
   delete "/api/v1/provider-profile/image",
-       to: "api/v1/provider_profile_images#destroy"
+         to: "api/v1/provider_profile_images#destroy"
 
-  post "/api/v1/documents/:kind", to: "api/v1/documents#create"
+  # ------------------------------------------------------------
+  # Documents API
+  # ------------------------------------------------------------
+
+  post "/api/v1/documents/:kind",
+       to: "api/v1/documents#create"
 end

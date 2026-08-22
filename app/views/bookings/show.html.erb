@@ -1,158 +1,80 @@
-<section class="booking-page">
-  <div class="container">
+<% if @booking.completed? %>
+  <div class="booking-completed">
 
-    <%= link_to "← My Bookings",
-                bookings_path,
-                class: "back-link" %>
+    <h2>Service Completed</h2>
 
-    <div class="booking-detail-card">
+    <p>
+      Your service has been completed.
+      We hope you had a great experience.
+    </p>
 
-      <div class="booking-detail-header">
-        <div>
-          <p class="page-label">
-            Booking #<%= @booking.id %>
-          </p>
+    <% if @booking.review.present? %>
 
-          <h1>
-            <%= @booking.provider.business_name %>
-          </h1>
-        </div>
-
-        <span class="booking-status">
-          <%= @booking.status.humanize %>
-        </span>
-      </div>
-
-      <div class="booking-detail-grid">
-
-        <div>
-          <span>Service</span>
-          <strong>
-            <%= @booking.service_category.name %>
-          </strong>
-        </div>
-
-        <div>
-          <span>Scheduled</span>
-          <strong>
-            <%= @booking.scheduled_at.strftime(
-                  "%d %b %Y, %I:%M %p"
-                ) %>
-          </strong>
-        </div>
-
-        <div>
-          <span>Duration</span>
-          <strong>
-            <%= @booking.estimated_duration %> minutes
-          </strong>
-        </div>
-
-        <div>
-          <span>Estimated Price</span>
-          <strong>
-            <%= pkr(@booking.estimated_price) %>
-          </strong>
-        </div>
-
-        <div>
-          <span>Address</span>
-          <strong>
-            <%= @booking.address.street %>,
-            <%= @booking.address.city %>
-          </strong>
-        </div>
-
-        <div>
-          <span>Created</span>
-          <strong>
-            <%= @booking.created_at.strftime("%d %b %Y") %>
-          </strong>
-        </div>
-
-      </div>
-
-      <div class="booking-description">
-        <h2>Service Description</h2>
+      <div class="review-submitted">
+        <h3>Your Review</h3>
 
         <p>
-          <%= @booking.customer_description %>
+          <strong>
+            Rating:
+            <%= "★" * @booking.review.rating %>
+            <%= "☆" * (5 - @booking.review.rating) %>
+          </strong>
+        </p>
+
+        <p>
+          <%= @booking.review.comment %>
         </p>
       </div>
 
-      <% if @booking.pending? %>
-        <div class="booking-actions">
+    <% else %>
 
-          <p>
-            Your booking is waiting for the provider to accept it.
-          </p>
+      <div id="review" class="review-form-section">
 
-          <%= form_with url: booking_cancel_path(@booking),
-                        method: :patch,
-                        local: true do %>
-            <%= submit_tag "Cancel Booking",
-                           class: "cancel-button" %>
-          <% end %>
+        <h3>Leave a Review</h3>
 
-        </div>
-      <% end %>
+        <p>
+          Tell us about your experience with
+          <strong><%= @booking.provider.business_name %></strong>.
+        </p>
 
-      <% if @booking.accepted? %>
-        <div class="booking-actions">
+        <%= form_with model: @review,
+                      url: review_booking_path(@booking),
+                      method: :post,
+                      local: true do |form| %>
 
-          <p>
-            The provider accepted your booking.
-            Please confirm it to continue.
-          </p>
+          <div class="form-group">
+            <%= form.label :rating, "Rating" %>
 
-          <%= form_with url: booking_confirm_path(@booking),
-                        method: :patch,
-                        local: true do %>
-            <%= submit_tag "Confirm Booking",
-                           class: "booking-submit-button" %>
-          <% end %>
+            <%= form.select :rating,
+                            options_for_select(
+                              [
+                                [ "5 — Excellent", 5 ],
+                                [ "4 — Very Good", 4 ],
+                                [ "3 — Good", 3 ],
+                                [ "2 — Fair", 2 ],
+                                [ "1 — Poor", 1 ]
+                              ],
+                              @review.rating
+                            ),
+                            { prompt: "Select a rating" } %>
+          </div>
 
-          <%= form_with url: booking_cancel_path(@booking),
-                        method: :patch,
-                        local: true do %>
-            <%= submit_tag "Cancel Booking",
-                           class: "cancel-button" %>
-          <% end %>
+          <div class="form-group">
+            <%= form.label :comment, "Your Review" %>
 
-        </div>
-      <% end %>
+            <%= form.text_area :comment,
+                               rows: 5,
+                               placeholder: "Share your experience..." %>
+          </div>
 
-      <% if @booking.confirmed? %>
-        <div class="booking-info-message">
-          Your booking is confirmed. The provider will start the
-          service at the scheduled time.
-        </div>
-      <% end %>
+          <%= form.submit "Submit Review",
+                          class: "booking-submit-button" %>
 
-      <% if @booking.in_progress? %>
-        <div class="booking-info-message">
-          Your service is currently in progress.
-        </div>
-      <% end %>
+        <% end %>
 
-      <% if @booking.completed? %>
-        <div class="booking-completed">
+      </div>
 
-          <h2>Service Completed</h2>
-
-          <p>
-            Your service has been completed.
-            We hope you had a great experience.
-          </p>
-
-          <%= link_to "Leave a Review",
-                      "#review",
-                      class: "booking-submit-button" %>
-
-        </div>
-      <% end %>
-
-    </div>
+    <% end %>
 
   </div>
-</section>
+<% end %>
