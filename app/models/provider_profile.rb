@@ -2,6 +2,8 @@ class ProviderProfile < ApplicationRecord
   belongs_to :user
 
   has_one_attached :profile_image
+  has_many_attached :identity_documents
+  has_many_attached :professional_certificates
 
   has_many :provider_services, dependent: :destroy
   has_many :availabilities, dependent: :destroy

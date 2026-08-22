@@ -29,5 +29,45 @@ module Types
 
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+    field :customer, Types::UserType, null: false
+    field :provider, Types::ProviderProfileType, null: false
+    field :service_category, Types::ServiceCategoryType, null: false
+    field :address, Types::AddressType, null: false
+    field :messages, [ Types::MessageType ], null: false
+    field :review, Types::ReviewType, null: true
+    field :status_histories, [ Types::BookingStatusHistoryType ], null: false
+
+    def messages
+      return [] unless participant?
+      object.messages.includes(:sender).order(:created_at)
+    end
+
+    def status_histories
+      return [] unless participant?
+      object.status_histories.includes(:changed_by).order(:created_at)
+    end
+
+    def review
+      participant? ? object.review : nil
+    end
+
+    def customer
+      participant? ? object.customer : nil
+    end
+
+    def provider
+      participant? ? object.provider : nil
+    end
+
+    def address
+      participant? ? object.address : nil
+    end
+
+    private
+
+    def participant?
+      user = context[:current_user]
+      user&.admin? || user == object.customer || (user&.provider? && user.provider_profile == object.provider)
+    end
   end
 end

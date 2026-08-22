@@ -18,9 +18,11 @@ class Api::V1::BookingsController < Api::V1::BaseController
                  Booking.all
     end
 
-    render json: {
-      bookings: bookings.map { |booking| booking_json(booking) }
-    }
+    bookings = apply_filters(bookings).order(safe_sort)
+    page, per_page = pagination
+    total_count = bookings.count
+    bookings = bookings.offset((page - 1) * per_page).limit(per_page)
+    render json: { bookings: bookings.map { |booking| booking_json(booking) }, pagination: { page: page, per_page: per_page, total_count: total_count, total_pages: (total_count.to_f / per_page).ceil } }
   end
 
   def show
@@ -44,30 +46,14 @@ class Api::V1::BookingsController < Api::V1::BaseController
       return
     end
 
-    provider = ProviderProfile.find_by(id: booking_params[:provider_id])
-
-    unless provider&.approved?
-      render json: {
-        error: "Provider not found"
-      }, status: :not_found
-      return
-    end
-
-    booking = Booking.new(booking_params)
-    booking.customer = current_user
-    booking.status = :pending
-
-    if booking.save
-      render json: {
-        message: "Booking created successfully",
-        booking: booking_json(booking)
-      }, status: :created
-    else
-      render json: {
-        error: "Booking could not be created",
-        errors: booking.errors.full_messages
-      }, status: :unprocessable_entity
-    end
+    booking = Bookings::Create.new(customer: current_user, attributes: booking_params.to_h.symbolize_keys).call
+    render json: { message: "Booking created successfully", booking: booking_json(booking) }, status: :created
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Provider or address not found" }, status: :not_found
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: "Booking could not be created", errors: e.record.errors.full_messages }, status: :unprocessable_entity
+  rescue ArgumentError => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def accept
@@ -192,5 +178,28 @@ class Api::V1::BookingsController < Api::V1::BaseController
       completed_at: booking.completed_at,
       cancelled_at: booking.cancelled_at
     }
+  end
+
+  def apply_filters(scope)
+    scope = scope.where(status: params[:status]) if params[:status].present? && Booking.statuses.key?(params[:status])
+    scope = scope.where(service_category_id: params[:service_category_id]) if params[:service_category_id].present?
+    scope = scope.where("scheduled_at >= ?", Time.zone.parse(params[:from])) if params[:from].present?
+    scope = scope.where("scheduled_at <= ?", Time.zone.parse(params[:to]).end_of_day) if params[:to].present?
+    scope
+  rescue ArgumentError
+    scope.none
+  end
+
+  def pagination
+    page = [ Integer(params.fetch(:page, 1)), 1 ].max
+    per_page = [ [ Integer(params.fetch(:per_page, 20)), 1 ].max, 100 ].min
+    [ page, per_page ]
+  rescue ArgumentError
+    [ 1, 20 ]
+  end
+
+  def safe_sort
+    field = %w[scheduled_at created_at status].include?(params[:sort]) ? params[:sort] : "scheduled_at"
+    { field => params[:direction] == "asc" ? :asc : :desc }
   end
 end

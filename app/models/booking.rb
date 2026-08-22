@@ -10,6 +10,8 @@ class Booking < ApplicationRecord
   has_many :status_histories,
            class_name: "BookingStatusHistory",
            dependent: :destroy
+  has_many_attached :problem_images
+  has_many_attached :supporting_documents
 
   enum :status, {
     pending: 0,
@@ -28,6 +30,7 @@ class Booking < ApplicationRecord
 
   validate :provider_is_available
   validate :no_overlapping_booking
+  validate :address_belongs_to_customer
 
   private
 
@@ -84,5 +87,11 @@ class Booking < ApplicationRecord
         "overlaps with an existing booking"
       )
     end
+  end
+
+  def address_belongs_to_customer
+    return if address.blank? || customer.blank? || address.user_id == customer_id
+
+    errors.add(:address, "must belong to the customer")
   end
 end

@@ -8,6 +8,7 @@ module Types
     field :booking_id, ID, null: false
     field :rating, Integer, null: false
     field :comment, String, null: false
+    field :customer, Types::UserType, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
   end

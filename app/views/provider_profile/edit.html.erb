@@ -65,6 +65,21 @@
                 required: true %>
         </div>
 
+        <div class="form-group">
+          <%= form.label :profile_image, "Profile image" %>
+          <%= form.file_field :profile_image, accept: "image/jpeg,image/png,image/webp" %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :identity_documents, "Identity documents (private)" %>
+          <%= form.file_field :identity_documents, multiple: true, accept: "application/pdf,image/jpeg,image/png" %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :professional_certificates, "Professional certificates (private)" %>
+          <%= form.file_field :professional_certificates, multiple: true, accept: "application/pdf,image/jpeg,image/png" %>
+        </div>
+
         <div class="form-actions">
           <%= form.submit "Save Changes",
                 class: "primary-button" %>

@@ -26,33 +26,24 @@ module Mutations
     )
       require_customer!
 
-      provider = ProviderProfile.find_by(id: provider_id)
-
-      unless provider&.approved?
-        raise GraphQL::ExecutionError, "Provider not found"
-      end
-
-      booking = Booking.new(
-        provider: provider,
+      booking = Bookings::Create.new(customer: current_user, attributes: {
+        provider_id: provider_id,
         service_category_id: service_category_id,
         address_id: address_id,
         scheduled_at: scheduled_at,
         estimated_duration: estimated_duration,
         customer_description: customer_description,
-        estimated_price: estimated_price,
-        customer: current_user,
-        status: :pending
-      )
-
-      unless booking.save
-        raise GraphQL::ExecutionError,
-              booking.errors.full_messages.join(", ")
-      end
+        estimated_price: estimated_price
+      }).call
 
       {
         message: "Booking created successfully",
         booking: booking
       }
+    rescue ActiveRecord::RecordInvalid => e
+      raise GraphQL::ExecutionError, e.record.errors.full_messages.join(", ")
+    rescue ActiveRecord::RecordNotFound, ArgumentError => e
+      raise GraphQL::ExecutionError, e.message
     end
   end
 end

@@ -25,6 +25,8 @@ class Api::V1::BaseController < ActionController::API
 
     if @current_user.nil?
       render json: { error: "User not found" }, status: :unauthorized
+    elsif !@current_user.active?
+      render json: { error: "Account is not active" }, status: :forbidden
     end
   end
 

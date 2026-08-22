@@ -41,6 +41,10 @@
         <strong><%= @completed_bookings %></strong>
       </div>
 
+      <div class="dashboard-stat"><span>Today</span><strong><%= @today_bookings %></strong></div>
+      <div class="dashboard-stat"><span>Rating</span><strong><%= @average_rating %> / 5</strong></div>
+      <div class="dashboard-stat"><span>Monthly earnings</span><strong>Rs. <%= @monthly_earnings %></strong></div>
+
     </div>
 
     <div class="dashboard-section">
@@ -128,10 +132,10 @@
                                 method: :patch,
                                 class: "booking-submit-button" %>
 
-                  <%= button_to "Reject",
-                                provider_reject_booking_path(booking),
-                                method: :patch,
-                                class: "cancel-button" %>
+                  <%= form_with url: provider_reject_booking_path(booking), method: :patch do |form| %>
+                    <%= form.text_field :rejection_reason, placeholder: "Reason for rejection", required: true %>
+                    <%= form.submit "Reject", class: "cancel-button" %>
+                  <% end %>
 
                 <% elsif booking.confirmed? %>
 
@@ -169,6 +173,11 @@
 
       <% end %>
 
+    </div>
+
+    <div class="dashboard-section">
+      <div class="section-heading"><div><p class="page-label">Schedule</p><h2>Next 7 days</h2></div></div>
+      <% if @upcoming_bookings.any? %><div class="dashboard-bookings"><% @upcoming_bookings.each do |booking| %><article class="dashboard-booking"><strong><%= booking.service_category.name %></strong><span><%= booking.scheduled_at.strftime("%a, %d %b %I:%M %p") %></span></article><% end %></div><% else %><p class="empty-state">No confirmed upcoming bookings.</p><% end %>
     </div>
 
   </div>

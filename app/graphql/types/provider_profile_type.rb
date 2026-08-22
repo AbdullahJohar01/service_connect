@@ -16,6 +16,8 @@ module Types
 
     field :user, Types::UserType, null: true
     field :services, [ Types::ProviderServiceType ], null: false
+    field :availability, [ Types::AvailabilityType ], null: false
+    field :reviews, [ Types::ReviewType ], null: false
 
     def user
       object.user
@@ -23,6 +25,14 @@ module Types
 
     def services
       object.provider_services.where(active: true)
+    end
+
+    def availability
+      object.availabilities.where(active: true).order(:day_of_week, :start_time)
+    end
+
+    def reviews
+      object.reviews.includes(:customer).order(created_at: :desc)
     end
 
     def profile_image_url

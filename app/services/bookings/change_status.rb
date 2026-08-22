@@ -17,21 +17,31 @@ class Bookings::ChangeStatus
   end
 
   def call
-    validate_user!
-    validate_transition!
-
     Booking.transaction do
+      @booking.lock!
+      validate_user!
+      validate_transition!
       previous_status = @booking.status
 
       update_booking!(previous_status)
       create_history!(previous_status)
       create_notification!
+      ActivityLogs::Record.call(action: "booking.#{@new_status}", actor: @user, subject: @booking)
+      BookingNotificationJob.perform_later(@booking.id, @new_status)
+      schedule_reminders! if @new_status == "accepted"
     end
 
     @booking
   end
 
   private
+
+  def schedule_reminders!
+    [ 24.hours, 1.hour ].each do |offset|
+      run_at = @booking.scheduled_at - offset
+      BookingReminderJob.set(wait_until: run_at).perform_later(@booking.id) if run_at > Time.current
+    end
+  end
 
   def validate_user!
     case @new_status

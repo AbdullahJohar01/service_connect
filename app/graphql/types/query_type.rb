@@ -129,7 +129,7 @@ module Types
     end
 
     def provider(id:)
-      ProviderProfile.find_by(id: id)
+      ProviderProfile.approved.find_by(id: id)
     end
 
     # ============================================================
@@ -229,6 +229,23 @@ module Types
 
     def reviews
       Review.all
+    end
+
+    field :admin_dashboard, Types::DashboardType, null: true
+
+    def admin_dashboard
+      return nil unless context[:current_user]&.admin?
+      bookings = Booking.all
+      { total_customers: User.customer.count, total_providers: User.provider.count, pending_provider_approvals: ProviderProfile.pending.count, total_bookings: bookings.count, completed_bookings: bookings.completed.count, cancelled_bookings: bookings.cancelled.count, platform_revenue: bookings.completed.sum("COALESCE(final_price, estimated_price)").to_f, average_booking_value: bookings.average("COALESCE(final_price, estimated_price)").to_f }
+    end
+
+    field :provider_dashboard, Types::DashboardType, null: true
+
+    def provider_dashboard
+      user = context[:current_user]
+      return nil unless user&.provider?
+      bookings = user.provider_profile.bookings
+      { total_customers: 0, total_providers: 0, pending_provider_approvals: 0, total_bookings: bookings.count, completed_bookings: bookings.completed.count, cancelled_bookings: bookings.cancelled.count, platform_revenue: bookings.completed.sum("COALESCE(final_price, estimated_price)").to_f, average_booking_value: bookings.average("COALESCE(final_price, estimated_price)").to_f }
     end
   end
 end

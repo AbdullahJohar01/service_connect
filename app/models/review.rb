@@ -6,6 +6,7 @@ belongs_to :booking
 validates :rating, inclusion: { in: 1..5 }
 validates :comment, presence: true
 validates :booking_id, uniqueness: true
+after_commit :refresh_provider_rating, on: [ :create, :update, :destroy ]
 
 validate :booking_must_be_completed
 validate :customer_must_match_booking
@@ -35,5 +36,9 @@ return unless booking && provider
 unless booking.provider_id == provider_id
   errors.add(:provider, "must be the provider of the booking")
 end
+end
+
+def refresh_provider_rating
+  ProviderRatingJob.perform_later(provider_id)
 end
 end

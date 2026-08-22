@@ -10,6 +10,7 @@ module Mutations
 
     def require_user!
       raise GraphQL::ExecutionError, "Authentication required" unless current_user
+      raise GraphQL::ExecutionError, "Account is not active" unless current_user.active?
     end
 
     def require_customer!

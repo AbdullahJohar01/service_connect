@@ -41,4 +41,5 @@ class User < ApplicationRecord
             }
 
   validates :phone_number, presence: true
+  validates :password, length: { minimum: 8 }, if: -> { password.present? }
 end

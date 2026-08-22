@@ -106,5 +106,8 @@ module Types
 
     field :mark_all_notifications_read,
           mutation: Mutations::MarkAllNotificationsRead
+
+    field :approve_provider, mutation: Mutations::ApproveProvider
+    field :suspend_user, mutation: Mutations::SuspendUser
   end
 end

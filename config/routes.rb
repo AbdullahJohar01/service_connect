@@ -167,6 +167,9 @@ Rails.application.routes.draw do
     patch "providers/:id/reject",
           to: "dashboard#reject_provider",
           as: :reject_provider
+
+    patch "users/:id/suspend", to: "dashboard#suspend_user", as: :suspend_user
+    patch "users/:id/reactivate", to: "dashboard#reactivate_user", as: :reactivate_user
   end
 
   # ============================================================
@@ -408,5 +411,7 @@ Rails.application.routes.draw do
        to: "api/v1/provider_profile_images#create"
 
   delete "/api/v1/provider-profile/image",
-         to: "api/v1/provider_profile_images#destroy"
+       to: "api/v1/provider_profile_images#destroy"
+
+  post "/api/v1/documents/:kind", to: "api/v1/documents#create"
 end

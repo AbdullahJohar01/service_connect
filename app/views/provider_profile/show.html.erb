@@ -24,10 +24,15 @@
     <% end %>
 
     <div class="profile-card">
+      <% if @provider_profile.profile_image.attached? %>
+        <%= image_tag @provider_profile.profile_image, alt: "Provider profile image", class: "profile-image" %>
+      <% end %>
       <div class="profile-row">
         <strong>Business Name</strong>
         <span><%= @provider_profile.business_name %></span>
       </div>
+
+      <div class="profile-row"><strong>Verification documents</strong><span><%= @provider_profile.identity_documents.count + @provider_profile.professional_certificates.count %> uploaded (visible only to you and administrators)</span></div>
 
       <div class="profile-row">
         <strong>Description</strong>

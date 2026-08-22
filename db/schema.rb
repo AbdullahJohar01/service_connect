@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_21_113131) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_22_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_113131) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "activity_logs", force: :cascade do |t|
+    t.string "action", null: false
+    t.bigint "actor_id"
+    t.datetime "created_at", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.bigint "subject_id"
+    t.string "subject_type"
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_activity_logs_on_action"
+    t.index ["actor_id"], name: "index_activity_logs_on_actor_id"
+    t.index ["subject_type", "subject_id"], name: "index_activity_logs_on_subject"
   end
 
   create_table "addresses", force: :cascade do |t|
@@ -100,6 +113,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_113131) do
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_bookings_on_address_id"
     t.index ["customer_id"], name: "index_bookings_on_customer_id"
+    t.index ["provider_id", "scheduled_at"], name: "index_bookings_on_provider_id_and_scheduled_at"
     t.index ["provider_id"], name: "index_bookings_on_provider_id"
     t.index ["service_category_id"], name: "index_bookings_on_service_category_id"
   end
@@ -154,6 +168,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_113131) do
     t.text "description"
     t.integer "experience_years", default: 0
     t.decimal "hourly_rate", precision: 10, scale: 2
+    t.text "rejection_reason"
     t.integer "total_reviews", default: 0
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
@@ -192,7 +207,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_113131) do
     t.bigint "provider_id", null: false
     t.integer "rating", null: false
     t.datetime "updated_at", null: false
-    t.index ["booking_id"], name: "index_reviews_on_booking_id"
+    t.index ["booking_id"], name: "index_reviews_on_booking_id", unique: true
     t.index ["customer_id"], name: "index_reviews_on_customer_id"
     t.index ["provider_id"], name: "index_reviews_on_provider_id"
   end
@@ -222,6 +237,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_113131) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "activity_logs", "users", column: "actor_id"
   add_foreign_key "addresses", "users"
   add_foreign_key "availabilities", "provider_profiles"
   add_foreign_key "booking_status_histories", "bookings"

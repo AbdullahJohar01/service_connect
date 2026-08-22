@@ -46,7 +46,10 @@ class ProviderProfileController < ApplicationController
       :business_name,
       :description,
       :experience_years,
-      :hourly_rate
+      :hourly_rate,
+      :profile_image,
+      identity_documents: [],
+      professional_certificates: []
     )
   end
 end

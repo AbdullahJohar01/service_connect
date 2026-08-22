@@ -6,6 +6,14 @@
     </div>
   </div>
 
+  <section class="admin-section">
+    <div class="stats-grid">
+      <% { "Customers" => @stats[:customers], "Providers" => @stats[:providers], "Bookings" => @stats[:bookings], "Completed" => @stats[:completed], "Cancelled" => @stats[:cancelled], "Revenue" => number_to_currency(@stats[:revenue]), "Average booking" => number_to_currency(@stats[:average_booking_value]) }.each do |label, value| %>
+        <div class="stat-card"><span><%= label %></span><strong><%= value %></strong></div>
+      <% end %>
+    </div>
+  </section>
+
   <% if notice.present? %>
     <div class="alert alert-success">
       <%= notice %>
@@ -154,6 +162,26 @@
       <p class="empty-state">No rejected providers.</p>
     <% end %>
   </section>
+
+  <section class="admin-section">
+    <div class="section-header"><h2>Users</h2></div>
+    <%= form_with url: admin_dashboard_path, method: :get, class: "admin-search" do |form| %>
+      <%= form.search_field :q, value: params[:q], placeholder: "Search by name or email" %>
+      <%= form.submit "Search", class: "btn btn-approve" %>
+    <% end %>
+    <div class="table-wrap"><table><thead><tr><th>User</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody>
+      <% @users.each do |user| %><tr><td><%= user.first_name %> <%= user.last_name %><br><small><%= user.email %></small></td><td><%= user.role %></td><td><%= user.status %></td><td>
+        <% unless user == current_user %><%= button_to(user.suspended? ? "Reactivate" : "Suspend", user.suspended? ? admin_reactivate_user_path(user) : admin_suspend_user_path(user), method: :patch, class: "btn #{user.suspended? ? 'btn-approve' : 'btn-reject'}", data: { turbo_confirm: "Are you sure?" }) %><% end %>
+      </td></tr><% end %>
+    </tbody></table></div>
+  </section>
+
+  <section class="admin-section">
+    <div class="section-header"><h2>Activity log</h2></div>
+    <div class="table-wrap"><table><thead><tr><th>When</th><th>Action</th><th>Actor</th><th>Subject</th></tr></thead><tbody>
+      <% @activity_logs.each do |log| %><tr><td><%= l(log.created_at, format: :short) %></td><td><%= log.action.humanize %></td><td><%= log.actor&.email || "System" %></td><td><%= log.subject_type %> #<%= log.subject_id %></td></tr><% end %>
+    </tbody></table></div>
+  </section>
 </div>
 
 <style>
@@ -194,6 +222,13 @@
   .admin-section {
     margin-bottom: 40px;
   }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .stat-card { padding: 16px; border-radius: 8px; background: #f3f7fb; display: grid; gap: 6px; }
+  .stat-card span, small { color: #667085; } .stat-card strong { font-size: 1.35rem; }
+  .table-wrap { overflow-x: auto; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; } th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+  .admin-search { display: flex; gap: 8px; margin-bottom: 12px; } .admin-search input { flex: 1; padding: 9px; }
 
   .section-header {
     display: flex;
