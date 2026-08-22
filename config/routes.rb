@@ -195,6 +195,9 @@ Rails.application.routes.draw do
   post "/api/v1/auth/logout",
        to: "api/v1/auth#logout"
 
+  delete "/api/v1/auth/logout",
+         to: "api/v1/auth#logout"
+
   get "/api/v1/auth/me",
       to: "api/v1/users#me"
 
@@ -273,6 +276,9 @@ Rails.application.routes.draw do
 
   delete "/api/v1/reviews/:id",
          to: "api/v1/reviews#destroy"
+
+  patch "/api/v1/reviews/:id",
+        to: "api/v1/reviews#update"
 
   # ------------------------------------------------------------
   # Message API
@@ -378,7 +384,10 @@ Rails.application.routes.draw do
         to: "api/v1/addresses#update"
 
   delete "/api/v1/addresses/:id",
-         to: "api/v1/addresses#destroy"
+      to: "api/v1/addresses#destroy"
+
+  patch "/api/v1/addresses/:id/set_default",
+      to: "api/v1/addresses#set_default"
 
   # ------------------------------------------------------------
   # Customer Profile API

@@ -8,7 +8,7 @@
 
   <section class="admin-section">
     <div class="stats-grid">
-      <% { "Customers" => @stats[:customers], "Providers" => @stats[:providers], "Bookings" => @stats[:bookings], "Completed" => @stats[:completed], "Cancelled" => @stats[:cancelled], "Revenue" => number_to_currency(@stats[:revenue]), "Average booking" => number_to_currency(@stats[:average_booking_value]) }.each do |label, value| %>
+      <% { "Customers" => @stats[:customers], "Providers" => @stats[:providers], "Bookings" => @stats[:bookings], "Completed" => @stats[:completed], "Cancelled" => @stats[:cancelled], "Revenue" => pkr(@stats[:revenue]), "Average booking" => pkr(@stats[:average_booking_value]) }.each do |label, value| %>
         <div class="stat-card"><span><%= label %></span><strong><%= value %></strong></div>
       <% end %>
     </div>

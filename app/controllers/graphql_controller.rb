@@ -38,7 +38,7 @@ class GraphqlController < ApplicationController
 
     return nil if decoded.nil?
 
-    User.find_by(id: decoded["user_id"])
+    User.active.find_by(id: decoded["user_id"])
   end
 
   def prepare_variables(variables_param)

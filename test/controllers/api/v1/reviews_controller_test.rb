@@ -113,4 +113,14 @@ class Api::V1::ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 4.0, @provider.average_rating.to_f
     assert_equal 1, @provider.total_reviews
   end
+
+  test "customer can update their own review" do
+    review = Review.create!(customer: @customer, provider: @provider, booking: @booking, rating: 4, comment: "Good service")
+
+    patch "/api/v1/reviews/#{review.id}", params: { review: { rating: 5, comment: "Excellent service" } }, headers: { "Authorization" => "Bearer #{@customer_token}" }
+
+    assert_response :success
+    assert_equal 5, review.reload.rating
+    assert_equal "Excellent service", review.comment
+  end
 end

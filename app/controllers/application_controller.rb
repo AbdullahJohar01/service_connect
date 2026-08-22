@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
 
   stale_when_importmap_changes
 
+  before_action :reject_inactive_session
+
   helper_method :current_user, :user_signed_in?
 
   private
@@ -21,5 +23,12 @@ class ApplicationController < ActionController::Base
     unless user_signed_in?
       redirect_to login_path, alert: "Please log in to continue."
     end
+  end
+
+  def reject_inactive_session
+    return unless current_user && !current_user.active?
+
+    reset_session
+    redirect_to login_path, alert: "Your account is not active."
   end
 end

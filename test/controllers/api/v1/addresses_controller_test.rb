@@ -90,6 +90,16 @@ class Api::V1::AddressesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Lahore", @address.city
   end
 
+  test "customer can set their default address" do
+    other_address = @user.addresses.create!(label: "Office", street: "100 Office Road", city: "Karachi", postal_code: "75000", is_default: true)
+
+    patch "/api/v1/addresses/#{@address.id}/set_default", headers: { "Authorization" => "Bearer #{@token}" }
+
+    assert_response :success
+    assert @address.reload.is_default
+    assert_not other_address.reload.is_default
+  end
+
   test "customer can delete their address" do
     assert_difference("Address.count", -1) do
       delete "/api/v1/addresses/#{@address.id}",

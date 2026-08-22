@@ -1,5 +1,5 @@
 class Api::V1::AddressesController < Api::V1::BaseController
-  before_action :set_address, only: [ :show, :update, :destroy ]
+  before_action :set_address, only: [ :show, :update, :destroy, :set_default ]
 
   def index
     addresses = current_user.addresses
@@ -51,6 +51,15 @@ class Api::V1::AddressesController < Api::V1::BaseController
     render json: {
       message: "Address deleted successfully"
     }
+  end
+
+  def set_default
+    Address.transaction do
+      current_user.addresses.where.not(id: @address.id).update_all(is_default: false, updated_at: Time.current)
+      @address.update!(is_default: true)
+    end
+
+    render json: { message: "Default address updated successfully", address: address_json(@address) }
   end
 
   private

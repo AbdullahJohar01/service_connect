@@ -40,7 +40,7 @@
         <span>Hourly rate</span>
 
         <strong>
-          Rs. <%= @provider.hourly_rate %>
+          <%= pkr(@provider.hourly_rate) %>
         </strong>
       </div>
 
@@ -99,7 +99,7 @@
 
                 <div class="service-price">
                   <strong>
-                    Rs. <%= service.base_price %>
+                    <%= pkr(service.base_price) %>
                   </strong>
 
                   <span>

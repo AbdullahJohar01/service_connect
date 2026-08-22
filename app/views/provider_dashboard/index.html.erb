@@ -43,7 +43,7 @@
 
       <div class="dashboard-stat"><span>Today</span><strong><%= @today_bookings %></strong></div>
       <div class="dashboard-stat"><span>Rating</span><strong><%= @average_rating %> / 5</strong></div>
-      <div class="dashboard-stat"><span>Monthly earnings</span><strong>Rs. <%= @monthly_earnings %></strong></div>
+      <div class="dashboard-stat"><span>Monthly earnings</span><strong><%= pkr(@monthly_earnings) %></strong></div>
 
     </div>
 
@@ -115,7 +115,7 @@
 
                 <p>
                   Estimated Price:
-                  Rs. <%= booking.estimated_price %>
+                  <%= pkr(booking.estimated_price) %>
                 </p>
               </div>
 

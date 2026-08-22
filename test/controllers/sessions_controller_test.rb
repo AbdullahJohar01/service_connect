@@ -27,6 +27,15 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_content
   end
 
+  test "should reject a suspended user" do
+    user = users(:one)
+    user.update!(status: :suspended)
+
+    post login_url, params: { email: user.email, password: "password123" }
+
+    assert_response :unprocessable_content
+  end
+
   test "should logout" do
     user = users(:one)
 
