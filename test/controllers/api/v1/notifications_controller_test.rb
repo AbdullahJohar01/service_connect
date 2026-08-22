@@ -50,6 +50,25 @@ class Api::V1::NotificationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal true, @notification.read
   end
 
+  test "customer can mark all notifications as read" do
+    customer_notifications = @customer.notifications
+
+    assert customer_notifications.any?
+
+    customer_notifications.update_all(read: false)
+
+    patch "/api/v1/notifications/read_all",
+          headers: {
+            "Authorization" => "Bearer #{@customer_token}"
+          }
+
+    assert_response :success
+
+    customer_notifications.reload
+
+    assert customer_notifications.all?(&:read)
+  end
+
   test "customer cannot access another user's notification" do
     get "/api/v1/notifications/#{notifications(:two).id}",
         headers: {

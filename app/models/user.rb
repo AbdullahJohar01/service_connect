@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :reviews, foreign_key: :customer_id, dependent: :destroy
   has_many :messages, foreign_key: :sender_id, dependent: :destroy
   has_many :notifications, dependent: :destroy
+  has_many :refresh_tokens, dependent: :destroy
+  has_many :password_reset_tokens, dependent: :destroy
   has_many :customer_bookings,
             class_name: "Booking",
             foreign_key: :customer_id,

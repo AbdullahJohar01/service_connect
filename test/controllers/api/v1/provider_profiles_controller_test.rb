@@ -21,8 +21,11 @@ class Api::V1::ProviderProfilesControllerTest < ActionDispatch::IntegrationTest
 
     data = JSON.parse(response.body)
 
-    assert_equal @provider_profile.id, data["provider_profile"]["id"]
-    assert_equal @provider.id, data["provider_profile"]["user_id"]
+    assert_equal @provider_profile.id,
+                 data["provider_profile"]["id"]
+
+    assert_equal @provider.id,
+                 data["provider_profile"]["user_id"]
   end
 
   test "provider can update their profile" do
@@ -54,6 +57,27 @@ class Api::V1::ProviderProfilesControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal 2000.0,
                  @provider_profile.hourly_rate.to_f
+  end
+
+  test "provider cannot change their approval status" do
+    original_status = @provider_profile.approval_status
+
+    patch "/api/v1/provider-profile",
+          params: {
+            provider_profile: {
+              approval_status: "approved"
+            }
+          },
+          headers: {
+            "Authorization" => "Bearer #{@provider_token}"
+          }
+
+    assert_response :success
+
+    @provider_profile.reload
+
+    assert_equal original_status,
+                 @provider_profile.approval_status
   end
 
   test "customer cannot access provider profile" do

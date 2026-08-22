@@ -89,21 +89,210 @@ class Api::V1::AuthControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "customer can login with valid credentials" do
-    post "/api/v1/auth/login",
-         params: {
-           email: @customer.email,
-           password: "password123"
-         }
+    assert_difference("RefreshToken.count", 1) do
+      post "/api/v1/auth/login",
+           params: {
+             email: @customer.email,
+             password: "password123"
+           },
+           as: :json
+    end
 
     assert_response :success
 
     data = JSON.parse(response.body)
 
     assert_equal "Login successful", data["message"]
-    assert data["token"].present?
+    assert data["access_token"].present?
+    assert data["refresh_token"].present?
     assert_equal @customer.id, data["user"]["id"]
     assert_equal @customer.email, data["user"]["email"]
     assert_equal "customer", data["user"]["role"]
+
+    refresh_token = RefreshToken.last
+
+    assert_equal @customer.id, refresh_token.user_id
+    assert refresh_token.active?
+  end
+
+  test "customer can refresh access token with valid refresh token" do
+    post "/api/v1/auth/login",
+         params: {
+           email: @customer.email,
+           password: "password123"
+         },
+         as: :json
+
+    assert_response :success
+
+    login_data = JSON.parse(response.body)
+    refresh_token = login_data["refresh_token"]
+
+    post "/api/v1/auth/refresh",
+         params: {
+           refresh_token: refresh_token
+         },
+         as: :json
+
+    assert_response :success
+
+    data = JSON.parse(response.body)
+
+    assert_equal "Access token refreshed successfully", data["message"]
+    assert data["access_token"].present?
+
+    decoded = JwtService.decode(data["access_token"])
+
+    assert_equal @customer.id, decoded["user_id"]
+    assert_equal "access", decoded["token_type"]
+  end
+
+  test "refresh fails when refresh token is missing" do
+    post "/api/v1/auth/refresh",
+         params: {},
+         as: :json
+
+    assert_response :unauthorized
+
+    data = JSON.parse(response.body)
+
+    assert_equal "Refresh token is required", data["error"]
+  end
+
+  test "refresh fails with invalid refresh token" do
+    post "/api/v1/auth/refresh",
+         params: {
+           refresh_token: "invalid-refresh-token"
+         },
+         as: :json
+
+    assert_response :unauthorized
+
+    data = JSON.parse(response.body)
+
+    assert_equal "Invalid or expired refresh token", data["error"]
+  end
+
+  test "refresh fails with expired refresh token" do
+    refresh_token = JwtService.generate_refresh_token
+
+    @customer.refresh_tokens.create!(
+      token_digest: JwtService.digest_refresh_token(refresh_token),
+      expires_at: 1.minute.ago
+    )
+
+    post "/api/v1/auth/refresh",
+         params: {
+           refresh_token: refresh_token
+         },
+         as: :json
+
+    assert_response :unauthorized
+
+    data = JSON.parse(response.body)
+
+    assert_equal "Invalid or expired refresh token", data["error"]
+  end
+
+  test "refresh fails with revoked refresh token" do
+    refresh_token = JwtService.generate_refresh_token
+
+    @customer.refresh_tokens.create!(
+      token_digest: JwtService.digest_refresh_token(refresh_token),
+      expires_at: 30.days.from_now,
+      revoked_at: Time.current
+    )
+
+    post "/api/v1/auth/refresh",
+         params: {
+           refresh_token: refresh_token
+         },
+         as: :json
+
+    assert_response :unauthorized
+
+    data = JSON.parse(response.body)
+
+    assert_equal "Invalid or expired refresh token", data["error"]
+  end
+
+  test "customer can logout successfully" do
+    post "/api/v1/auth/login",
+         params: {
+           email: @customer.email,
+           password: "password123"
+         },
+         as: :json
+
+    assert_response :success
+
+    login_data = JSON.parse(response.body)
+    refresh_token = login_data["refresh_token"]
+
+    post "/api/v1/auth/logout",
+         params: {
+           refresh_token: refresh_token
+         },
+         as: :json
+
+    assert_response :success
+
+    data = JSON.parse(response.body)
+
+    assert_equal "Logout successful", data["message"]
+
+    stored_token = RefreshToken.find_by(
+      token_digest: JwtService.digest_refresh_token(refresh_token)
+    )
+
+    assert_not_nil stored_token
+    assert_not_nil stored_token.revoked_at
+  end
+
+  test "logout fails when refresh token is missing" do
+    post "/api/v1/auth/logout",
+         params: {},
+         as: :json
+
+    assert_response :unauthorized
+
+    data = JSON.parse(response.body)
+
+    assert_equal "Refresh token is required", data["error"]
+  end
+
+  test "revoked refresh token cannot be used after logout" do
+    post "/api/v1/auth/login",
+         params: {
+           email: @customer.email,
+           password: "password123"
+         },
+         as: :json
+
+    assert_response :success
+
+    login_data = JSON.parse(response.body)
+    refresh_token = login_data["refresh_token"]
+
+    post "/api/v1/auth/logout",
+         params: {
+           refresh_token: refresh_token
+         },
+         as: :json
+
+    assert_response :success
+
+    post "/api/v1/auth/refresh",
+         params: {
+           refresh_token: refresh_token
+         },
+         as: :json
+
+    assert_response :unauthorized
+
+    data = JSON.parse(response.body)
+
+    assert_equal "Invalid or expired refresh token", data["error"]
   end
 
   test "login fails with invalid password" do

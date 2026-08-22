@@ -24,6 +24,17 @@ class Api::V1::NotificationsController < Api::V1::BaseController
     }
   end
 
+  def read_all
+    current_user.notifications.where(read: false).update_all(
+      read: true,
+      updated_at: Time.current
+    )
+
+    render json: {
+      message: "All notifications marked as read"
+    }
+  end
+
   def destroy
     @notification.destroy
 

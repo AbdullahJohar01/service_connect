@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  if Rails.env.development?
+    mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
+  end
+  post "/graphql", to: "graphql#execute"
   # ============================================================
   # WEB APPLICATION
   # ============================================================
@@ -182,6 +186,21 @@ Rails.application.routes.draw do
   post "/api/v1/auth/login",
        to: "api/v1/auth#login"
 
+  post "/api/v1/auth/refresh",
+       to: "api/v1/auth#refresh"
+
+  post "/api/v1/auth/logout",
+       to: "api/v1/auth#logout"
+
+  get "/api/v1/auth/me",
+      to: "api/v1/users#me"
+
+  post "/api/v1/auth/forgot-password",
+       to: "api/v1/auth#forgot_password"
+
+  post "/api/v1/auth/reset-password",
+       to: "api/v1/auth#reset_password"
+
   # ------------------------------------------------------------
   # User API
   # ------------------------------------------------------------
@@ -272,11 +291,15 @@ Rails.application.routes.draw do
   get "/api/v1/notifications/:id",
       to: "api/v1/notifications#show"
 
+  patch "/api/v1/notifications/read_all",
+        to: "api/v1/notifications#read_all"
+
   patch "/api/v1/notifications/:id/read",
         to: "api/v1/notifications#read"
 
   delete "/api/v1/notifications/:id",
          to: "api/v1/notifications#destroy"
+
 
   # ------------------------------------------------------------
   # Availability API
@@ -376,4 +399,14 @@ Rails.application.routes.draw do
 
   patch "/api/v1/provider-profile",
         to: "api/v1/provider_profiles#update"
+
+  # ------------------------------------------------------------
+  # Provider Profile Image API
+  # ------------------------------------------------------------
+
+  post "/api/v1/provider-profile/image",
+       to: "api/v1/provider_profile_images#create"
+
+  delete "/api/v1/provider-profile/image",
+         to: "api/v1/provider_profile_images#destroy"
 end

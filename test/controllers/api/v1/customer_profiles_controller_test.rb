@@ -43,6 +43,43 @@ class Api::V1::CustomerProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Urdu", @customer_profile.preferred_language
   end
 
+  test "customer can create their customer profile" do
+    customer = User.create!(
+      first_name: "New",
+      last_name: "Customer",
+      email: "new_customer_profile@example.com",
+      password: "password123",
+      phone_number: "03000000008",
+      role: :customer,
+      status: :active
+    )
+
+    token = JwtService.encode(customer.id)
+
+    assert_difference("CustomerProfile.count", 1) do
+      post "/api/v1/customer-profile",
+           params: {
+             customer_profile: {
+               date_of_birth: "1998-05-10",
+               preferred_language: "English"
+             }
+           },
+           headers: {
+             "Authorization" => "Bearer #{token}"
+           }
+    end
+
+    assert_response :created
+
+    data = JSON.parse(response.body)
+
+    assert_equal "Customer profile created successfully",
+                 data["message"]
+
+    assert_equal customer.id,
+                 data["customer_profile"]["user_id"]
+  end
+
   test "customer cannot create a second customer profile" do
     post "/api/v1/customer-profile",
          params: {

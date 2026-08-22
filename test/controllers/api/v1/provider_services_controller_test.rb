@@ -55,6 +55,23 @@ class Api::V1::ProviderServicesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "inactive provider services are not visible to customers" do
+    @provider_service.update!(active: false)
+
+    get "/api/v1/provider-services",
+        headers: {
+          "Authorization" => "Bearer #{@customer_token}"
+        }
+
+    assert_response :success
+
+    data = JSON.parse(response.body)
+
+    service_ids = data["provider_services"].map { |service| service["id"] }
+
+    assert_not_includes service_ids, @provider_service.id
+  end
+
   test "provider can create a service" do
     assert_difference("ProviderService.count", 1) do
       post "/api/v1/provider-services",
@@ -123,6 +140,50 @@ class Api::V1::ProviderServicesControllerTest < ActionDispatch::IntegrationTest
                  @provider_service.base_price.to_f
   end
 
+  test "provider cannot update another provider's service" do
+    other_provider = ProviderProfile.create!(
+      user: User.create!(
+        first_name: "Other",
+        last_name: "Provider",
+        email: "other_provider_services@example.com",
+        password: "password123",
+        phone_number: "03000000006",
+        role: :provider,
+        status: :active
+      ),
+      business_name: "Other Provider",
+      experience_years: 5,
+      hourly_rate: 1000,
+      approval_status: :approved
+    )
+
+    other_service = ProviderService.create!(
+      provider_profile: other_provider,
+      service_category: @category,
+      description: "Other provider service",
+      base_price: 2500,
+      duration_minutes: 60,
+      active: true
+    )
+
+    patch "/api/v1/provider-services/#{other_service.id}",
+          params: {
+            provider_service: {
+              description: "Unauthorized update"
+            }
+          },
+          headers: {
+            "Authorization" => "Bearer #{@provider_token}"
+          }
+
+    assert_response :forbidden
+
+    other_service.reload
+
+    assert_equal "Other provider service",
+                 other_service.description
+  end
+
   test "provider can delete their service" do
     assert_difference("ProviderService.count", -1) do
       delete "/api/v1/provider-services/#{@provider_service.id}",
@@ -132,6 +193,44 @@ class Api::V1::ProviderServicesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :success
+  end
+
+  test "provider cannot delete another provider's service" do
+    other_provider = ProviderProfile.create!(
+      user: User.create!(
+        first_name: "Other",
+        last_name: "Provider",
+        email: "other_provider_delete@example.com",
+        password: "password123",
+        phone_number: "03000000007",
+        role: :provider,
+        status: :active
+      ),
+      business_name: "Other Provider",
+      experience_years: 5,
+      hourly_rate: 1000,
+      approval_status: :approved
+    )
+
+    other_service = ProviderService.create!(
+      provider_profile: other_provider,
+      service_category: @category,
+      description: "Other provider service",
+      base_price: 2500,
+      duration_minutes: 60,
+      active: true
+    )
+
+    assert_no_difference("ProviderService.count") do
+      delete "/api/v1/provider-services/#{other_service.id}",
+             headers: {
+               "Authorization" => "Bearer #{@provider_token}"
+             }
+    end
+
+    assert_response :forbidden
+
+    assert ProviderService.exists?(other_service.id)
   end
 
   test "customer can access an active provider service" do

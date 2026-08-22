@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_12_085050) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_21_113131) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "addresses", force: :cascade do |t|
     t.string "city"
@@ -107,6 +135,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_12_085050) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
+  create_table "password_reset_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "used_at"
+    t.bigint "user_id", null: false
+    t.index ["token_digest"], name: "index_password_reset_tokens_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_password_reset_tokens_on_user_id"
+  end
+
   create_table "provider_profiles", force: :cascade do |t|
     t.integer "approval_status", default: 0, null: false
     t.decimal "average_rating", precision: 3, scale: 2, default: "0.0"
@@ -132,6 +171,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_12_085050) do
     t.datetime "updated_at", null: false
     t.index ["provider_profile_id"], name: "index_provider_services_on_provider_profile_id"
     t.index ["service_category_id"], name: "index_provider_services_on_service_category_id"
+  end
+
+  create_table "refresh_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["token_digest"], name: "index_refresh_tokens_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
   end
 
   create_table "reviews", force: :cascade do |t|
@@ -170,6 +220,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_12_085050) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "users"
   add_foreign_key "availabilities", "provider_profiles"
   add_foreign_key "booking_status_histories", "bookings"
@@ -183,9 +235,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_12_085050) do
   add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "notifications", "bookings"
   add_foreign_key "notifications", "users"
+  add_foreign_key "password_reset_tokens", "users"
   add_foreign_key "provider_profiles", "users"
   add_foreign_key "provider_services", "provider_profiles"
   add_foreign_key "provider_services", "service_categories"
+  add_foreign_key "refresh_tokens", "users"
   add_foreign_key "reviews", "bookings"
   add_foreign_key "reviews", "provider_profiles", column: "provider_id"
   add_foreign_key "reviews", "users", column: "customer_id"

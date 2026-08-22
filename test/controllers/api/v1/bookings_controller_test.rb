@@ -194,19 +194,21 @@ class Api::V1::BookingsControllerTest < ActionDispatch::IntegrationTest
   private
 
   def login_as(user, password)
-    post "/api/v1/auth/login",
-         params: {
-           email: user.email,
-           password: password
-         },
-         as: :json
+  post "/api/v1/auth/login",
+       params: {
+         email: user.email,
+         password: password
+       },
+       as: :json
 
-    assert_response :success
+  assert_response :success
 
-    response_body = JSON.parse(response.body)
+  response_body = JSON.parse(response.body)
 
-    assert_equal "Login successful", response_body["message"]
+  assert_equal "Login successful", response_body["message"]
+  assert response_body["access_token"].present?
+  assert response_body["refresh_token"].present?
 
-    response_body["token"]
-  end
+  response_body["access_token"]
+end
 end
