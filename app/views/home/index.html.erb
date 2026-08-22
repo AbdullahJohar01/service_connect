@@ -1,71 +1,213 @@
-<header class="site-header">
-  <div class="container header-content">
-    <%= link_to "Service Connect", root_path, class: "logo" %>
+<div class="home-page">
+  <section class="home-hero">
+    <div class="home-container">
+      <div class="home-hero-content">
+        <span class="home-eyebrow">Trusted home services</span>
 
-    <nav>
-      <% if user_signed_in? %>
-        <span class="welcome-text">
-          Hi, <%= current_user.first_name %>
-        </span>
+        <h1>Find trusted service professionals for your home.</h1>
 
-        <%= button_to "Logout",
-                      logout_path,
-                      method: :delete,
-                      class: "nav-button" %>
+        <p>
+          Connect with reliable local experts, compare your options, and book
+          quality home services through one simple platform.
+        </p>
+
+        <div class="home-hero-actions">
+          <%= link_to "Find a Service", "#services", class: "home-primary-button" %>
+          <%= link_to "Browse Providers", providers_path, class: "home-secondary-button" %>
+        </div>
+
+        <div class="home-trust-points">
+          <span>✓ Verified providers</span>
+          <span>✓ Easy booking</span>
+          <span>✓ Transparent PKR pricing</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-services" id="services">
+    <div class="home-container">
+      <div class="home-section-heading">
+        <span class="home-eyebrow">What we offer</span>
+        <h2>Explore our services</h2>
+        <p>
+          Choose a category and discover professionals who can handle the job.
+        </p>
+      </div>
+
+      <% if @service_categories.any? %>
+        <div class="home-service-grid">
+          <% @service_categories.each do |category| %>
+            <% icon = case category.name.downcase
+                      when "electrical" then "⚡"
+                      when "plumbing" then "🔧"
+                      when "cleaning" then "✦"
+                      when "painting" then "🎨"
+                      when "carpentry" then "⌂"
+                      else "✓"
+                      end %>
+
+            <%= link_to providers_path(service_category_id: category.id),
+                        class: "home-service-card" do %>
+              <div class="home-service-icon"><%= icon %></div>
+
+              <div>
+                <h3><%= category.name %></h3>
+                <p>
+                  <%= category.description.presence ||
+                      "Find trusted professionals for #{category.name.downcase} services." %>
+                </p>
+              </div>
+
+              <span class="home-card-arrow">→</span>
+            <% end %>
+          <% end %>
+        </div>
       <% else %>
-        <%= link_to "Login",
-                    login_path,
-                    class: "nav-link" %>
+        <div class="home-empty-state">
+          <h3>No services available yet</h3>
+          <p>Service categories will appear here when they become available.</p>
+        </div>
       <% end %>
-    </nav>
-  </div>
-</header>
+    </div>
+  </section>
 
-<section class="hero">
-  <div class="container">
-    <h1>Find Trusted Service Providers</h1>
+  <section class="home-section home-providers">
+    <div class="home-container">
+      <div class="home-section-heading home-section-heading-row">
+        <div>
+          <span class="home-eyebrow">Meet the professionals</span>
+          <h2>Featured providers</h2>
+          <p>Explore experienced professionals available through Service Connect.</p>
+        </div>
 
-    <p>
-      Service Connect helps customers find reliable service providers
-      for their everyday needs. Browse services, compare providers,
-      book appointments, and manage your bookings in one place.
-    </p>
+        <%= link_to "View all providers", providers_path, class: "home-text-link" %>
+      </div>
 
-    <%= link_to "Find a Service", "#services", class: "hero-button" %>
-  </div>
-</section>
+      <div class="home-provider-grid">
+        <%= link_to provider_path(1), class: "home-provider-card" do %>
+          <div class="home-provider-avatar">A</div>
+          <div class="home-provider-content">
+            <div class="home-rating">★ 4.88</div>
+            <h3>Ali Electrical Services</h3>
+            <p>Electrical installation and repair</p>
+            <div class="home-provider-meta">
+              <span>6 years experience</span>
+              <strong>PKR 1,800/hr</strong>
+            </div>
+          </div>
+        <% end %>
 
-<section class="services" id="services">
-  <div class="container">
-    <h2>Popular Services</h2>
+        <%= link_to provider_path(2), class: "home-provider-card" do %>
+          <div class="home-provider-avatar">D</div>
+          <div class="home-provider-content">
+            <div class="home-rating">★ 5.0</div>
+            <h3>Danish Electrical Services</h3>
+            <p>Professional electrical services</p>
+            <div class="home-provider-meta">
+              <span>5 years experience</span>
+              <strong>PKR 1,700/hr</strong>
+            </div>
+          </div>
+        <% end %>
 
-    <% if @service_categories.any? %>
-      <div class="service-grid">
-        <% @service_categories.each do |category| %>
-          <div class="service-card">
-            <h3>
-              <%= category.name %>
-            </h3>
-
-            <p>
-              <%= category.description.presence ||
-                  "Find trusted professionals for #{category.name.downcase} services." %>
-            </p>
-
-            <%= link_to "View Providers",
-                        providers_path(service_category_id: category.id),
-                        class: "service-link" %>
+        <%= link_to provider_path(6), class: "home-provider-card" do %>
+          <div class="home-provider-avatar">A</div>
+          <div class="home-provider-content">
+            <div class="home-rating">New provider</div>
+            <h3>Ahmed Plumbing Services</h3>
+            <p>Plumbing and water supply services</p>
+            <div class="home-provider-meta">
+              <span>6 years experience</span>
+              <strong>PKR 1,600/hr</strong>
+            </div>
           </div>
         <% end %>
       </div>
-    <% else %>
-      <div class="empty-state">
-        <h3>No services available yet</h3>
+    </div>
+  </section>
 
-        <p>
-          Service categories will appear here when they become available.
-        </p>
+  <section class="home-section home-how-it-works">
+    <div class="home-container">
+      <div class="home-section-heading">
+        <span class="home-eyebrow">Simple process</span>
+        <h2>How Service Connect works</h2>
+        <p>Getting professional help should be simple.</p>
       </div>
-    <% end %>
-  </div>
-</section>
+
+      <div class="home-steps">
+        <div class="home-step">
+          <span>01</span>
+          <div>
+            <h3>Choose a service</h3>
+            <p>Select the category that matches your needs.</p>
+          </div>
+        </div>
+
+        <div class="home-step">
+          <span>02</span>
+          <div>
+            <h3>Find a provider</h3>
+            <p>Compare professionals, experience, ratings, and prices.</p>
+          </div>
+        </div>
+
+        <div class="home-step">
+          <span>03</span>
+          <div>
+            <h3>Book your service</h3>
+            <p>Choose a suitable time and submit your booking request.</p>
+          </div>
+        </div>
+
+        <div class="home-step">
+          <span>04</span>
+          <div>
+            <h3>Get it done</h3>
+            <p>Track the booking from acceptance through completion.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-testimonial">
+    <div class="home-container">
+      <div class="home-testimonial-card">
+        <div class="home-quote-mark">“</div>
+        <div>
+          <span class="home-eyebrow">Customer experience</span>
+          <blockquote>
+            Excellent service. The provider was professional and completed the
+            electrical work successfully.
+          </blockquote>
+          <div class="home-testimonial-author">
+            <span class="home-testimonial-avatar">A</span>
+            <div>
+              <strong>Abdullah Johar</strong>
+              <span>Verified customer</span>
+            </div>
+            <span class="home-rating">★★★★★</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-cta">
+    <div class="home-container">
+      <div class="home-cta-content">
+        <div>
+          <span class="home-eyebrow">Ready to get started?</span>
+          <h2>Find the right professional for your next job.</h2>
+          <p>Browse trusted providers and make your booking today.</p>
+        </div>
+
+        <div class="home-hero-actions">
+          <%= link_to "Browse Providers", providers_path, class: "home-primary-button home-primary-button-light" %>
+          <%= link_to "Explore Services", "#services", class: "home-secondary-button home-secondary-button-light" %>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
